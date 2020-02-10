@@ -1,0 +1,20 @@
+.rowData {
+  margin: 8px;
+}
+.rowData:hover {
+  cursor: pointer;
+  color: #1890ff;
+}
+.name {
+  margin-right: 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.popover {
+  display: flex;
+}
+.questionWrapper {
+  display: flex;
+  flex-direction: column;
+  margin-right: 4px;
+}
