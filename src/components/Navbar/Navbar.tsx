@@ -1,10 +1,12 @@
 import React from "react";
 import Styles from "./Navbar.module.css";
 import { PageHeader, Dropdown, Button, Menu, Avatar } from "antd";
+import { RootState, logout } from "../../redux";
+import { connect } from "react-redux";
 
 interface NavbarProps {
-  name: string;
-  logout(): void;
+  name?: string;
+  logout: typeof logout;
 }
 
 const Navbar = (props: NavbarProps): JSX.Element => {
@@ -35,4 +37,10 @@ const Navbar = (props: NavbarProps): JSX.Element => {
     </div>
   );
 };
-export default Navbar;
+
+const mapStateToProps = (state: RootState) => {
+  const { currentUser } = state.Auth;
+  return { name: currentUser ? currentUser.name : undefined };
+};
+
+export default connect(mapStateToProps, { logout })(Navbar);

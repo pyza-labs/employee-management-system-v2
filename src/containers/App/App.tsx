@@ -7,91 +7,76 @@ import SignUp from "../SignUp/SignUp";
 import ErrorPage from "../../components/ErrorPage/ErrorPage";
 import EmployeeHome from "../Employee/EmployeeHome/EmployeeHome";
 import HrHome from "../HR/HrHome/HrHome";
-import { auth } from "firebase";
-import { firestore } from "firebase";
-import { message } from "antd";
+import { User } from "../../repos";
+import { listenToAuthState, RootState } from "../../redux";
+import { connect } from "react-redux";
 
-const App: FC = () => {
-  const [fireUser = null, setFireUser] = useState<firebase.User | null>();
-  const [role = "", setRole] = useState();
-  const [orgCode = "", setOrgCode] = useState();
-  const [name = "", setName] = useState();
+interface AppProps {
+  currentUser?: User | null;
+  listenToAuthState: typeof listenToAuthState;
+}
 
-  useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(firebaseUser => {
-      if (firebaseUser) {
-        console.log(firebaseUser);
-        // setIsLogin(true);
-        setFireUser(firebaseUser);
-      } else {
-        console.log("Not Logged In");
-        // setIsLogin(false);
-        setFireUser(firebaseUser);
-      }
-    });
-    return unsubscribe;
-  }, []);
-
-  useEffect(() => {
-    if (!fireUser) {
-      return;
-    }
-    const unsubscribe = firestore()
-      .collection("users")
-      .doc(fireUser.uid)
-      .onSnapshot(doc => {
-        const data = doc.data();
-        if (doc.exists && !!data) {
-          setName(data.name); // Force unwraapping is wrong practise  and makes sure the data is not null
-          setRole(data.role);
-          setOrgCode(data.orgCode);
-          setRole(doc.data()!.role); //Example of force unwrapping
-        } else {
-          console.log("SignUp in Progress");
-        }
-      });
-
-    return unsubscribe;
-  }, [fireUser]);
-
-  const logoutHandler = (): void => {
-    if (!fireUser) {
-      return;
-    }
-    auth().signOut();
-    message.success("Logged Out Successfully");
-    setRole("");
-    setOrgCode("");
-    setName("");
-    navigate("http://localhost:3000/");
-  };
-
-  const homeSwitch = (): JSX.Element | null => {
-    switch (role) {
-      case "hr":
-        return <HrHome fireuser={fireUser} orgCode={orgCode} path="home" />;
-      case "employee":
-        return (
-          <EmployeeHome fireuser={fireUser} orgCode={orgCode} path="home" />
-        );
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <Fragment>
-      <div className="App">
-        <Navbar logout={logoutHandler} name={name} />
-        <Router>
-          <LoginPage fireuser={fireUser} orgCode={orgCode} path="/" />
-          <SignUp fireuser={fireUser} path="signup" />
-          {homeSwitch()}
-          <ErrorPage path="error404"></ErrorPage>
-        </Router>
-      </div>
-    </Fragment>
-  );
+const homeSwitch = (role: string): JSX.Element | null => {
+  switch (role) {
+    case "hr":
+      return <HrHome fireuser={fireUser} orgCode={orgCode} path="home" />;
+    case "employee":
+      return <EmployeeHome fireuser={fireUser} orgCode={orgCode} path="home" />;
+    default:
+      return null;
+  }
 };
 
-export default App;
+const App: FC<AppProps> = props => {
+  useEffect(() => {
+    listenToAuthState();
+  }, []);
+
+  const { currentUser } = props;
+
+  if (currentUser === undefined) {
+    return <div>Loading</div>;
+  }
+
+  if (currentUser === null) {
+    return (
+      <div>
+        <Navbar logout={() => {}} />
+        <Router>
+          <LoginPage />
+          <SignUp />
+        </Router>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <Router>
+        <Navbar logout={() => {}} name={currentUser.name} />
+        {homeSwitch(currentUser.role)}
+      </Router>
+    </div>
+  );
+
+  // return (
+  //   <Fragment>
+  //     <div className="App">
+  //       <Navbar logout={() => {}} name={name} />
+  //       <Router>
+  //         <LoginPage fireuser={fireUser} orgCode={orgCode} path="/" />
+  //         <SignUp fireuser={fireUser} path="signup" />
+  //         {homeSwitch()}
+  //         <ErrorPage path="error404"></ErrorPage>
+  //       </Router>
+  //     </div>
+  //   </Fragment>
+  // );
+};
+
+const mapStateToProps = (state: RootState) => {
+  const { currentUser, message, error } = state.Auth;
+  return { currentUser, message, error };
+};
+
+export default connect(mapStateToProps, { listenToAuthState })(App);
