@@ -3,6 +3,8 @@ import Styles from "./Navbar.module.css";
 import { PageHeader, Dropdown, Button, Menu, Avatar } from "antd";
 import { RootState, logout } from "../../redux";
 import { connect } from "react-redux";
+import { navigate } from "@reach/router";
+import { Routes } from "../../containers/App/App";
 
 interface NavbarProps {
   name?: string;
@@ -12,7 +14,11 @@ interface NavbarProps {
 const Navbar = (props: NavbarProps): JSX.Element => {
   const menu = (
     <Menu>
-      <Menu.Item onClick={props.logout}>LogOut</Menu.Item>
+      {props.name ? (
+        <Menu.Item onClick={props.logout}>LogOut</Menu.Item>
+      ) : (
+        <Menu.Item onClick={() => navigate(Routes.Home)}>LogIn</Menu.Item>
+      )}
     </Menu>
   );
 

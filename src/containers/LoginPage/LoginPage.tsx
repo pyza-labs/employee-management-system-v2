@@ -1,74 +1,33 @@
-import React, {
-  useState,
-  useEffect,
-  FC,
-  ChangeEventHandler,
-  ChangeEvent
-} from "react";
+import React, { useState, FC, ChangeEventHandler, ChangeEvent } from "react";
 import Styles from "./LoginPage.module.css";
-import { Input, Button, message } from "antd";
-import { auth } from "firebase";
-import { navigate, Link, RouteComponentProps } from "@reach/router";
+import { Input, Button } from "antd";
+import { Link, RouteComponentProps } from "@reach/router";
+import { connect } from "react-redux";
+import { RootState, signIn } from "../../redux";
+import { Routes } from "../App/App";
 
-export interface AppProps extends RouteComponentProps {
-  orgCode: string;
-  fireuser: firebase.User | null;
+export interface LoginProps extends RouteComponentProps {
+  loading: boolean;
+  signIn: typeof signIn;
 }
 
-const LoginPage: FC<AppProps> = props => {
+const LoginPage: FC<LoginProps> = props => {
   const [email = "", setEmail] = useState<string>();
-  const [pass = "", setPass] = useState<string>();
-  const [code = "", setCode] = useState<string>();
-  const [loading = false, setLoading] = useState<boolean>();
+  const [password = "", setPassword] = useState<string>();
+  const [orgCode = "", setOrgCode] = useState<string>();
+
+  const { signIn, loading } = props;
 
   const emailHandler: ChangeEventHandler<HTMLInputElement> = (event): void => {
     setEmail(event.target.value.trim());
   };
 
   const passHandler = (event: ChangeEvent<HTMLInputElement>): void => {
-    setPass(event.target.value);
+    setPassword(event.target.value);
   };
 
   const codeHandler = (event: ChangeEvent<HTMLInputElement>): void => {
-    setCode(event.target.value);
-  };
-
-  useEffect(() => {
-    if (!props.orgCode) {
-      return;
-    }
-    console.log(props.orgCode, code);
-    if (props.orgCode === code) {
-      navigate("home");
-    } else {
-      message.error("Wrong Organisational Code");
-      auth().signOut();
-      navigate("erromess404");
-    }
-  }, [props.orgCode]);
-
-  const loginHandler = async (
-    event: React.MouseEvent<HTMLButtonElement>
-  ): Promise<void> => {
-    setLoading(true);
-    await auth()
-      .signInWithEmailAndPassword(email, pass)
-      .catch(error => alert(error.message));
-  };
-
-  const forgotPassHandler = (): void => {
-    if (!email) {
-      alert("No Email Entered");
-      return;
-    }
-    auth()
-      .sendPasswordResetEmail(email)
-      .then(() => {
-        alert("Email Sent");
-      })
-      .catch(error => {
-        // An error happened.
-      });
+    setOrgCode(event.target.value);
   };
 
   return (
@@ -94,19 +53,25 @@ const LoginPage: FC<AppProps> = props => {
         <Button
           loading={loading}
           className={Styles.button}
-          onClick={loginHandler}
-          disabled={!email || !pass || !code}
+          onClick={() => signIn(email, password, orgCode)}
+          disabled={!email || !password || !orgCode}
         >
           SignIn
         </Button>
         <Button className={Styles.button}>
-          <Link to="signup">SignUp</Link>
+          <Link to={Routes.SignUp}>SignUp</Link>
         </Button>
-        <a className={Styles.forgot} onClick={forgotPassHandler} href="">
+        <Link className={Styles.forgot} to={Routes.ForgotPassword}>
           Forgot Password
-        </a>
+        </Link>
       </div>
     </div>
   );
 };
-export default LoginPage;
+
+const mapStateToProps = (state: RootState) => {
+  const { loading } = state.Auth;
+  return { loading };
+};
+
+export default connect(mapStateToProps, { signIn })(LoginPage);

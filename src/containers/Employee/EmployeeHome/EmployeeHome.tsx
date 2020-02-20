@@ -3,7 +3,7 @@ import Styles from "./EmployeeHome.module.css";
 import { Layout, Menu, Icon, List, Skeleton, Tag } from "antd";
 import EmployeeAnswers from "./EmployeeAnswerItem/EmployeeAnswerItem";
 import { firestore } from "firebase";
-import { AppProps } from "../../LoginPage/LoginPage";
+// import { AppProps } from "../../LoginPage/LoginPage";
 import { Question } from "../../HR/HrHome/HrHome";
 
 const { SubMenu } = Menu;

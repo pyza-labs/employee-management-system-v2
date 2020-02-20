@@ -1,5 +1,6 @@
 import { action, ActionType } from "typesafe-actions";
 import { User } from "../../repos";
+import { FormData } from "../../containers/SignUp/SignUp";
 
 export enum AuthActionType {
   ListenToAuthState = "AuthActionType/ListenToAuthState",
@@ -7,7 +8,11 @@ export enum AuthActionType {
   SetCurrentUser = "AuthActionType/SetCurrentUser",
   SetMessage = "SetMessage",
   SetError = "SetError",
-  Logout = "AuthActionType/Logout"
+  Logout = "AuthActionType/Logout",
+  ResetPassword = "AuthActionType/ResetPassword",
+  SignUp = "AuthActionType/SignUp",
+  UploadProfilePicture = "AuthActionType/UploadProfilePicture",
+  CreateUser = "AuthActionType/CreateUser"
 }
 
 export const listenToAuthState = () => action(AuthActionType.ListenToAuthState);
@@ -26,13 +31,29 @@ export const setError = (error?: string) =>
 
 export const logout = () => action(AuthActionType.Logout);
 
+export const resetPassword = (email: string) =>
+  action(AuthActionType.ResetPassword, { email });
+
+export const signUp = (values: FormData, state: string, region: string) =>
+  action(AuthActionType.SignUp, { values, state, region });
+
+export const uploadProfilePicture = (file: File) =>
+  action(AuthActionType.UploadProfilePicture, { file });
+
+export const createUser = (email: string, password: string) =>
+  action(AuthActionType.CreateUser, { email, password });
+
 const authActions = {
   listenToAuthState,
   setCurrentUser,
   signIn,
   setMessage,
   setError,
-  logout
+  logout,
+  resetPassword,
+  signUp,
+  uploadProfilePicture,
+  createUser
 };
 
 export type AuthAction = ActionType<typeof authActions>;

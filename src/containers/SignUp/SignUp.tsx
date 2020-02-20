@@ -11,9 +11,13 @@ import {
   message
 } from "antd";
 import { auth, firestore, storage } from "firebase";
-import { navigate, RouteComponentProps } from "@reach/router";
+import { RouteComponentProps } from "@reach/router";
 import { FormComponentProps } from "antd/lib/form";
 import { UploadProps } from "antd/lib/upload";
+import { RootState } from "../../redux";
+import { connect } from "react-redux";
+import { signUp } from "../../redux";
+import { uploadProfilePicture } from "../../repos";
 
 var {
   CountryDropdown,
@@ -22,7 +26,7 @@ var {
 
 const { Option } = Select;
 
-interface FormData {
+export interface FormData {
   email: string;
   password: string;
   name: string;
@@ -34,36 +38,39 @@ interface FormData {
 }
 
 interface SignUpFormProps extends FormComponentProps<FormData> {
-  fireuser: firebase.User | null;
+  loading: boolean;
+  signUp: typeof signUp;
 }
 
 const SignUpForm: FC<SignUpFormProps> = props => {
   const [confirmDirty = false, setConfirmDirty] = useState();
-  const [state, setState] = useState<string>();
-  const [region, setRegion] = useState<string>();
+  const [state = "", setState] = useState<string>();
+  const [region = "", setRegion] = useState<string>();
   const [email = "", setEmail] = useState();
+  const [disabled = true, setDisabled] = useState();
 
   const uploadAttributes: UploadProps = {
     name: "file",
-    customRequest: async ({ onError, onSuccess, file }) => {
-      const storageRef = storage().ref();
-      console.log("chocs");
-      const metadata = {
-        contentType: "image/jpeg"
-      };
-      const uploadTask = storageRef.child(`${email}/images/${file.name}`);
-      try {
-        const image = await uploadTask.put(file, metadata);
-        onSuccess({}, file); //
-      } catch (error) {
-        onError(error);
-      }
+    customRequest: options => {
+      const { onProgress, onError, onSuccess, file } = options;
+      uploadProfilePicture(file).subscribe(
+        snapshot => {
+          const percent =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          onProgress({ percent }, file);
+          if (percent === 100) {
+            onSuccess({ downloadUrl: snapshot.downloadURL }, file);
+          }
+        },
+        error => {
+          onError(error);
+        }
+      );
     },
     headers: {
       authorization: "authorization-text"
     },
     onChange(info) {
-      console.log("hi");
       if (info.file.status !== "uploading") {
         console.log(info.file, info.fileList);
       }
@@ -101,33 +108,7 @@ const SignUpForm: FC<SignUpFormProps> = props => {
     props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log("Received values of form: ", values);
-        firestore()
-          .collection("users")
-          .doc(props.fireuser!.uid)
-          .set({
-            name: values.name,
-            email: values.email,
-            orgCode: values.orgCode,
-            role: values.role,
-            bio: values.bio,
-            pan: values.pan,
-            address: values.address,
-            state: state,
-            region: region
-          })
-          .then(() => {
-            alert("it's done");
-            console.log("Written");
-            if (values.role === "hr") navigate(`http://localhost:3000/hrHome`);
-            else if (values.role === "employee") {
-              navigate(`http://localhost:3000/employeeHome`);
-            } else if (values.role === "accounts") {
-              navigate(`http://localhost:3000/accountsHome`);
-            }
-          })
-          .catch(error => {
-            console.error("Error writing document: ", error);
-          });
+        props.signUp(values, state, region);
       } else {
         return alert("Please fill the fields marked with asterik");
       }
@@ -148,8 +129,7 @@ const SignUpForm: FC<SignUpFormProps> = props => {
     if (value && value !== form.getFieldValue("password")) {
       callback("Two passwords that you enter is inconsistent!");
     } else {
-      const promise = auth().createUserWithEmailAndPassword(email, value);
-      promise.catch(error => console.log(error.message));
+      setDisabled(false);
       callback();
     }
   };
@@ -288,7 +268,7 @@ const SignUpForm: FC<SignUpFormProps> = props => {
             getValueFromEvent: normalizeFileStructure
           })(
             <Upload {...uploadAttributes}>
-              <Button>
+              <Button disabled={disabled}>
                 <Icon type="upload" /> Click to Upload
               </Button>
             </Upload>
@@ -353,7 +333,7 @@ const SignUpForm: FC<SignUpFormProps> = props => {
           )}
         </Form.Item>
         <Form.Item {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={props.loading}>
             Register
           </Button>
         </Form.Item>
@@ -363,12 +343,18 @@ const SignUpForm: FC<SignUpFormProps> = props => {
 };
 
 interface SignUpProps extends RouteComponentProps {
-  fireuser: firebase.User | null;
+  loading: boolean;
+  signUp: typeof signUp;
 }
+
+const mapStateToProps = (state: RootState) => {
+  const { loading } = state.Auth;
+  return { loading };
+};
 
 const SignUp: FC<SignUpProps> = props => {
   const ConnectedForm = Form.create<SignUpFormProps>()(SignUpForm);
-  return <ConnectedForm fireuser={props.fireuser} />;
-}; // Dependecy Injection
+  return <ConnectedForm loading={props.loading} signUp={props.signUp} />;
+};
 
-export default SignUp;
+export default connect(mapStateToProps, { signUp })(SignUp);

@@ -32,6 +32,9 @@ export const AuthStateReducer = (
         draft.error = action.payload.error;
         draft.loading = false;
         break;
+      case AuthActionType.SignUp:
+        draft.loading = true;
+        break;
     }
     return draft;
   });
