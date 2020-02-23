@@ -21,8 +21,7 @@ import {
   signIn,
   resetPassword,
   signUp,
-  uploadProfilePicture,
-  createUser
+  uploadProfilePicture
 } from "../../repos";
 import { auth } from "firebase";
 

@@ -11,8 +11,7 @@ export enum AuthActionType {
   Logout = "AuthActionType/Logout",
   ResetPassword = "AuthActionType/ResetPassword",
   SignUp = "AuthActionType/SignUp",
-  UploadProfilePicture = "AuthActionType/UploadProfilePicture",
-  CreateUser = "AuthActionType/CreateUser"
+  UploadProfilePicture = "AuthActionType/UploadProfilePicture"
 }
 
 export const listenToAuthState = () => action(AuthActionType.ListenToAuthState);
@@ -40,9 +39,6 @@ export const signUp = (values: FormData, state: string, region: string) =>
 export const uploadProfilePicture = (file: File) =>
   action(AuthActionType.UploadProfilePicture, { file });
 
-export const createUser = (email: string, password: string) =>
-  action(AuthActionType.CreateUser, { email, password });
-
 const authActions = {
   listenToAuthState,
   setCurrentUser,
@@ -52,8 +48,7 @@ const authActions = {
   logout,
   resetPassword,
   signUp,
-  uploadProfilePicture,
-  createUser
+  uploadProfilePicture
 };
 
 export type AuthAction = ActionType<typeof authActions>;

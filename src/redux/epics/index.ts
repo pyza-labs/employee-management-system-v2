@@ -10,12 +10,21 @@ import {
   signUpEpic
 } from "./AuthEpics";
 
+import {
+  listenToHrQuestionsStateEpic,
+  deleteQuestionEpic,
+  updateQuestionEpic
+} from "./HrEpics";
+
 export default combineEpics(
   listenToAuthStateEpic,
   logoutEpic,
   signInEpic,
   resetPasswordEpic,
-  signUpEpic
+  signUpEpic,
+  listenToHrQuestionsStateEpic,
+  deleteQuestionEpic,
+  updateQuestionEpic
 );
 
 export type RootEpic = Epic<RootAction, RootAction, RootState>;

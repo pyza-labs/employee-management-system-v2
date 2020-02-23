@@ -84,20 +84,6 @@ const App: FC<AppProps> = props => {
       </Router>
     </div>
   );
-
-  // return (
-  //   <Fragment>
-  //     <div className="App">
-  //       <Navbar logout={() => {}} name={name} />
-  //       <Router>
-  //         <LoginPage fireuser={fireUser} orgCode={orgCode} path="/" />
-  //         <SignUp fireuser={fireUser} path="signup" />
-  //         {homeSwitch()}
-  //         <ErrorPage path="error404"></ErrorPage>
-  //       </Router>
-  //     </div>
-  //   </Fragment>
-  // );
 };
 
 const mapStateToProps = (state: RootState) => {

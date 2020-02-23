@@ -2,58 +2,35 @@ import React, { useState, useEffect, FC } from "react";
 import Styles from "./HrHome.module.css";
 import { Layout, Menu, Icon } from "antd";
 import ProgressBar from "./ProgressBar/ProgressBar";
-import { firestore } from "firebase";
-import QuestionTable from "../../../components/QuestionsTable/QuestionTable";
+import QuestionTable from "./QuestionsTable/QuestionTable";
 import QuestionForm from "./QuestionForm/QuestionForm";
-import { AppProps } from "../../LoginPage/LoginPage";
+import { connect } from "react-redux";
+import { RootState, listenToHrQuestionsState } from "../../../redux";
+import { Question } from "../../../repos";
 
 const { SubMenu } = Menu;
 const { Content, Sider } = Layout;
 
-export interface Question {
-  id: string;
-  important: boolean;
+interface HrProps {
   orgCode: string;
-  type: string;
-  question: string;
-  options?: string[];
+  questions?: Question[] | null; // Why This Error onRemoval of ?
+  loading: boolean;
+  listenToHrQuestionsState: typeof listenToHrQuestionsState;
 }
 
-const HrHome: FC<AppProps> = props => {
-  const [questions = [], setQuestions] = useState<Question[]>();
-  const [onQuestions = true, setOnQuestions] = useState();
+const HrHome: FC<HrProps> = props => {
+  const { orgCode, questions, listenToHrQuestionsState, loading } = props;
+  const [onQuestions = false, setOnQuestions] = useState();
   const [progress = false, setProgress] = useState();
 
   const [selectedOption = "Questions", setSelectedOption] = useState();
-  const [isLoading = true, setIsLoading] = useState();
 
   useEffect(() => {
-    if (!props.orgCode) {
+    if (!orgCode) {
       return;
     }
-    let unsubscribe = firestore()
-      .collection("onboardingQuestions")
-      .where("orgCode", "==", props.orgCode)
-      .onSnapshot(
-        querySnapshot => {
-          const questions = querySnapshot.docs.map(
-            doc =>
-              ({
-                id: doc.id,
-                ...doc.data() // Force Casting
-              } as Question)
-          );
-          setQuestions(questions);
-          setIsLoading(false);
-        },
-        error => {
-          alert("Error fetching the document");
-          console.log(error);
-        }
-      );
-
-    return unsubscribe;
-  }, [props.orgCode]);
+    listenToHrQuestionsState(orgCode);
+  }, [orgCode, listenToHrQuestionsState]);
 
   const showQuestionsHandler = (): void => {
     setOnQuestions(true);
@@ -111,19 +88,19 @@ const HrHome: FC<AppProps> = props => {
             <h1 className={Styles.selectedOption}>{selectedOption}</h1>
             {onQuestions && (
               <Content className={Styles.content}>
-                <QuestionForm orgCode={props.orgCode} />
-                {questions.length !== 0 && (
+                <QuestionForm orgCode={orgCode!} />
+                {questions!.length !== 0 && (
                   <QuestionTable //remove hr
-                    dataSource={questions}
-                    loading={isLoading}
+                    dataSource={questions!}
+                    loading={loading!}
                   />
                 )}
               </Content>
             )}
             {progress && (
               <ProgressBar
-                totalQuestions={questions.length}
-                orgCode={props.orgCode}
+                totalQuestions={questions!.length}
+                orgCode={orgCode!}
               />
             )}
           </Layout>
@@ -132,4 +109,20 @@ const HrHome: FC<AppProps> = props => {
     </div>
   );
 };
-export default HrHome;
+
+const mapStateToProps = (state: RootState) => {
+  const { currentUser } = state.Auth;
+  const { questions, loading } = state.Hr;
+  const orgCode = currentUser!.orgCode;
+  return { orgCode, questions, loading };
+};
+
+export default connect(mapStateToProps, { listenToHrQuestionsState })(HrHome);
+
+// useEffect(() => {
+//   if (!orgCode) {
+//     return;
+//   }
+//   let unsubscribe = listenToHrQuestionsState(orgCode);
+//   return unsubscribe;
+// }, [orgCode, listenToHrQuestionsState]);

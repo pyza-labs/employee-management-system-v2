@@ -4,6 +4,8 @@ import { firestore } from "firebase";
 import { Icon, Input, Button, Switch, Form, Radio, message } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import { RadioChangeEvent } from "antd/lib/radio";
+import { connect } from "react-redux";
+import { RootState } from "../../../../redux";
 
 interface FormData {
   question: string;
@@ -235,7 +237,9 @@ const QuestionForm: FC<HrAddProps> = props => {
   return <ConnectedComponent orgCode={props.orgCode} />; //Doubt
 };
 
-export default QuestionForm;
+const mapStateToProps = (state: RootState) => {};
+
+export default connect()(QuestionForm);
 
 // Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function.
 //     in HrAddQuestionForm (created by Form(HrAddQuestionForm))

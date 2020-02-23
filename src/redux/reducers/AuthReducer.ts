@@ -1,7 +1,6 @@
 import { User } from "../../repos";
 import { produce } from "immer";
 import { AuthAction, AuthActionType } from "../actions";
-import { act } from "react-dom/test-utils";
 
 export interface AuthStateType {
   readonly loading: boolean;
