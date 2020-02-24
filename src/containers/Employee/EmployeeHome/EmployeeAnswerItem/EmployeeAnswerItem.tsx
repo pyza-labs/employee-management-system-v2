@@ -4,12 +4,13 @@ import { Input, message, Upload, Button, Icon, Radio, Tag } from "antd";
 import { firestore, storage } from "firebase";
 import debounce from "lodash.debounce";
 import { UploadProps } from "antd/lib/upload";
-import { Question } from "../../../HR/HrHome/HrHome";
+import { Question, User } from "../../../../repos";
 import { RadioChangeEvent } from "antd/lib/radio/interface";
+import { connect } from "react-redux";
 
 interface EmpAnswerProps {
   question: Question;
-  fireuser: firebase.User;
+  currentUser?: User | null;
   saveStatus(status: boolean): void;
 }
 
@@ -19,41 +20,27 @@ export interface empDocData {
   answer: string;
 }
 const EmployeeAnswerItem: FC<EmpAnswerProps> = props => {
+  const { question, currentUser, saveStatus } = props;
+
   const [text = "", setText] = useState();
   const [radio = "", setRadio] = useState();
 
   useEffect(() => {
-    if (!props.fireuser.uid || !props.question.question) {
+    if (!currentUser || !currentUser.id || !props.question.question) {
       return;
     }
-    let unsubscribe = firestore()
-      .collection("users")
-      .doc(props.fireuser.uid)
-      .collection("onboardingAnswers")
-      .doc(props.question.id)
-      .onSnapshot(documentSnapshot => {
-        if (documentSnapshot.data()) {
-          const documentData: empDocData = {
-            question: documentSnapshot.data()!.question, // dobut
-            id: documentSnapshot.id,
-            answer: documentSnapshot.data()!.answer
-          };
-          const { answer } = documentData;
-          switch (props.question.type) {
-            case "text":
-              setText(answer);
-              break;
-            case "mcq":
-              setRadio(answer);
-              break;
-            case "file":
-              setText(answer);
-              break;
-            default:
-          }
-        }
-      });
-    return unsubscribe;
+    switch (props.question.type) {
+      case "text":
+        setText(props.answer);
+        break;
+      case "mcq":
+        setRadio(props.answer);
+        break;
+      case "file":
+        setText(props.answer);
+        break;
+      default:
+    }
   }, []);
 
   const debounceEvent = (...args: [(event: any) => any, number]) => {
@@ -66,9 +53,12 @@ const EmployeeAnswerItem: FC<EmpAnswerProps> = props => {
   };
 
   const firestoreData = (text: string): void => {
+    if (!currentUser || !currentUser.id) {
+      return;
+    }
     firestore()
       .collection("users")
-      .doc(props.fireuser.uid)
+      .doc(currentUser.id)
       .collection("onboardingAnswers")
       .doc(props.question.id)
       .set(
@@ -108,8 +98,11 @@ const EmployeeAnswerItem: FC<EmpAnswerProps> = props => {
       const metadata = {
         contentType: "image/jpeg" || "application/pdf"
       };
+      if (!currentUser) {
+        return;
+      }
       const uploadTask = storageRef.child(
-        `users/${props.fireuser.uid}/answer/${props.question.id}`
+        `users/${currentUser.id}/answer/${props.question.id}`
       );
       try {
         const image = await uploadTask.put(file, metadata);
@@ -207,4 +200,6 @@ const EmployeeAnswerItem: FC<EmpAnswerProps> = props => {
   return render();
 };
 
-export default EmployeeAnswerItem;
+const mapStateToProps = () => {};
+
+export default connect(mapStateToProps, {})(EmployeeAnswerItem);

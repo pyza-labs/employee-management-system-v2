@@ -1,10 +1,10 @@
 import { Question } from "../../repos";
 import { produce } from "immer";
 import { HrAction, HrActionType } from "../actions";
-import { AuthStateType } from "../reducers/AuthReducer";
 
-export interface HrStateType extends AuthStateType {
-  readonly questions?: Question[] | null;
+export interface HrStateType {
+  readonly questions?: Question[];
+  readonly loading: boolean;
 }
 
 const initialState: HrStateType = { loading: true };
@@ -16,8 +16,11 @@ export const HrStateReducer = (
   return produce(currentState, draft => {
     switch (action.type) {
       case HrActionType.SetQuestions:
-        draft.loading = true;
+        draft.loading = false;
         draft.questions = action.payload.questions;
+        break;
+      case HrActionType.SetOnBoardingQuestions:
+        draft.loading = false;
         break;
     }
     return draft;

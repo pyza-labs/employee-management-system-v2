@@ -5,21 +5,22 @@ import ProgressBar from "./ProgressBar/ProgressBar";
 import QuestionTable from "./QuestionsTable/QuestionTable";
 import QuestionForm from "./QuestionForm/QuestionForm";
 import { connect } from "react-redux";
-import { RootState, listenToHrQuestionsState } from "../../../redux";
+import { RootState, listenToHrQuestions } from "../../../redux";
 import { Question } from "../../../repos";
+import { RouteComponentProps } from "@reach/router";
 
 const { SubMenu } = Menu;
 const { Content, Sider } = Layout;
 
-interface HrProps {
+interface HrProps extends RouteComponentProps {
   orgCode: string;
-  questions?: Question[] | null; // Why This Error onRemoval of ?
+  questions?: Question[];
   loading: boolean;
-  listenToHrQuestionsState: typeof listenToHrQuestionsState;
+  listenToHrQuestions: typeof listenToHrQuestions;
 }
 
 const HrHome: FC<HrProps> = props => {
-  const { orgCode, questions, listenToHrQuestionsState, loading } = props;
+  const { orgCode, questions, listenToHrQuestions, loading } = props;
   const [onQuestions = false, setOnQuestions] = useState();
   const [progress = false, setProgress] = useState();
 
@@ -29,8 +30,8 @@ const HrHome: FC<HrProps> = props => {
     if (!orgCode) {
       return;
     }
-    listenToHrQuestionsState(orgCode);
-  }, [orgCode, listenToHrQuestionsState]);
+    listenToHrQuestions(orgCode);
+  }, [orgCode, listenToHrQuestions]);
 
   const showQuestionsHandler = (): void => {
     setOnQuestions(true);
@@ -88,7 +89,7 @@ const HrHome: FC<HrProps> = props => {
             <h1 className={Styles.selectedOption}>{selectedOption}</h1>
             {onQuestions && (
               <Content className={Styles.content}>
-                <QuestionForm orgCode={orgCode!} />
+                <QuestionForm loading={loading} orgCode={orgCode!} />
                 {questions!.length !== 0 && (
                   <QuestionTable //remove hr
                     dataSource={questions!}
@@ -117,12 +118,12 @@ const mapStateToProps = (state: RootState) => {
   return { orgCode, questions, loading };
 };
 
-export default connect(mapStateToProps, { listenToHrQuestionsState })(HrHome);
+export default connect(mapStateToProps, { listenToHrQuestions })(HrHome);
 
 // useEffect(() => {
 //   if (!orgCode) {
 //     return;
 //   }
-//   let unsubscribe = listenToHrQuestionsState(orgCode);
+//   let unsubscribe =listenToHrQuestions(orgCode);
 //   return unsubscribe;
-// }, [orgCode, listenToHrQuestionsState]);
+// }, [orgCode,listenToHrQuestions]);

@@ -1,7 +1,13 @@
-import React, { useState, FC, ChangeEventHandler, ChangeEvent } from "react";
+import React, {
+  useState,
+  FC,
+  ChangeEventHandler,
+  ChangeEvent,
+  useEffect
+} from "react";
 import Styles from "./LoginPage.module.css";
 import { Input, Button } from "antd";
-import { Link, RouteComponentProps } from "@reach/router";
+import { Link, RouteComponentProps, redirectTo } from "@reach/router";
 import { connect } from "react-redux";
 import { RootState, signIn } from "../../redux";
 import { Routes } from "../App/App";
@@ -15,6 +21,12 @@ const LoginPage: FC<LoginProps> = props => {
   const [email = "", setEmail] = useState<string>();
   const [password = "", setPassword] = useState<string>();
   const [orgCode = "", setOrgCode] = useState<string>();
+
+  useEffect(() => {
+    if (window.location.pathname !== Routes.Home) {
+      redirectTo(Routes.Home);
+    }
+  }, []);
 
   const { signIn, loading } = props;
 

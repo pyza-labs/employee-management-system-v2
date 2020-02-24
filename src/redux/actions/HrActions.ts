@@ -1,17 +1,19 @@
 import { Question } from "../../repos";
 import { action, ActionType } from "typesafe-actions";
+import { FormDataHrQuestions } from "../../containers/HR/HrHome/QuestionForm/QuestionForm";
 
 export enum HrActionType {
-  ListenToHrQuestionsState = "HrActionType/ListenToHrQuestionState",
+  ListenToHrQuestions = "HrActionType/ListenToHrQuestions",
   SetQuestions = "HrActionType/SetQuestion",
   UpdateImportantStatus = "HrActionType/UpdateImportantStatus",
-  DeleteQuestion = "HrActionType/DeleteQuestion"
+  DeleteQuestion = "HrActionType/DeleteQuestion",
+  SetOnBoardingQuestions = "HrActionType/SetOnBoardingQuestions"
 }
 
-export const listenToHrQuestionsState = (orgCode: string) =>
-  action(HrActionType.ListenToHrQuestionsState, { orgCode });
+export const listenToHrQuestions = (orgCode: string) =>
+  action(HrActionType.ListenToHrQuestions, { orgCode });
 
-export const setQuestions = (questions: Question[] | null) =>
+export const setQuestions = (questions: Question[]) =>
   action(HrActionType.SetQuestions, { questions });
 
 export const updateImportantStatus = (checked: boolean, docId: string) =>
@@ -20,11 +22,18 @@ export const updateImportantStatus = (checked: boolean, docId: string) =>
 export const deleteQuestion = (docId: string) =>
   action(HrActionType.DeleteQuestion, { docId });
 
+export const setOnBoardingQuestions = (
+  values: FormDataHrQuestions,
+  orgCode: string,
+  options?: string[]
+) => action(HrActionType.SetOnBoardingQuestions, { values, orgCode, options });
+
 const hrActions = {
-  listenToHrQuestionsState,
+  listenToHrQuestions,
   setQuestions,
   updateImportantStatus,
-  deleteQuestion
+  deleteQuestion,
+  setOnBoardingQuestions
 };
 
 export type HrAction = ActionType<typeof hrActions>;

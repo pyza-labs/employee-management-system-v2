@@ -1,41 +1,42 @@
 import React, { useState, useEffect, FC } from "react";
 import Styles from "./EmployeeHome.module.css";
-import { Layout, Menu, Icon, List, Skeleton, Tag } from "antd";
+import { Layout, Menu, Icon, List, Skeleton } from "antd";
 import EmployeeAnswers from "./EmployeeAnswerItem/EmployeeAnswerItem";
-import { firestore } from "firebase";
-// import { AppProps } from "../../LoginPage/LoginPage";
-import { Question } from "../../HR/HrHome/HrHome";
+import { connect } from "react-redux";
+import { Question, User } from "../../../repos";
+import { RootState, listenToEmployeeQuestions } from "../../../redux";
+import { RouteComponentProps } from "@reach/router";
 
 const { SubMenu } = Menu;
 const { Content, Sider } = Layout;
 
-const EmployeeHome: FC<AppProps> = props => {
-  const [questions = [], setQuestions] = useState<Question[]>();
+interface EmployeeProps extends RouteComponentProps {
+  currentUser?: User | null;
+  listenToEmployeeQuestions: typeof listenToEmployeeQuestions;
+  loading: boolean;
+  questions?: Question[];
+}
+
+const EmployeeHome: FC<EmployeeProps> = props => {
+  const {
+    currentUser,
+    loading,
+    listenToEmployeeQuestions,
+    questions = []
+  } = props;
+
   const [
     selectedOption = "Onboarding Questions",
     setSelectedOption
   ] = useState();
-  const [loading = true, setLoading] = useState();
   const [saveStatus = false, setSaveStatus] = useState();
 
   useEffect(() => {
-    if (!props.orgCode) {
-      setLoading(true);
+    if (!currentUser || currentUser.orgCode) {
       return;
     }
-    firestore()
-      .collection("onboardingQuestions")
-      .where("orgCode", "==", props.orgCode)
-      .get()
-      .then(querySnapshot => {
-        const questions = querySnapshot.docs.map(doc => {
-          // doc.data() is never undefined for query doc snapshot
-          return { ...doc.data(), id: doc.id } as Question;
-        });
-        setQuestions(questions); //
-        setLoading(false);
-      });
-  }, [props.orgCode]);
+    listenToEmployeeQuestions(currentUser.orgCode);
+  }, [currentUser && currentUser.orgCode]);
 
   return (
     <div className={Styles.employeeHome}>
@@ -98,7 +99,7 @@ const EmployeeHome: FC<AppProps> = props => {
                             description={
                               <EmployeeAnswers
                                 question={item}
-                                fireuser={props.fireuser!}
+                                currentUser={currentUser}
                                 saveStatus={(status: boolean): void =>
                                   setSaveStatus(status)
                                 }
@@ -118,4 +119,13 @@ const EmployeeHome: FC<AppProps> = props => {
     </div>
   );
 };
-export default EmployeeHome;
+
+const mapStateToProps = (state: RootState) => {
+  const { currentUser } = state.Auth;
+  const { questions, loading } = state.Hr;
+  return { currentUser, questions, loading };
+};
+
+export default connect(mapStateToProps, { listenToEmployeeQuestions })(
+  EmployeeHome
+);

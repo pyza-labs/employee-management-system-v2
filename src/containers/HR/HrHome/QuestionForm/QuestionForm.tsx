@@ -5,19 +5,23 @@ import { Icon, Input, Button, Switch, Form, Radio, message } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import { RadioChangeEvent } from "antd/lib/radio";
 import { connect } from "react-redux";
-import { RootState } from "../../../../redux";
+import { RootState, setOnBoardingQuestions } from "../../../../redux";
+import { OmitProps } from "antd/lib/transfer/renderListBody";
 
-interface FormData {
+export interface FormDataHrQuestions {
   question: string;
   important: string;
   type: string;
 }
 
-interface HrAddFormProps extends FormComponentProps<FormData> {
+interface HrAddFormProps extends FormComponentProps<FormDataHrQuestions> {
   orgCode: string;
+  loading?: boolean;
+  setOnBoardingQuestions: typeof setOnBoardingQuestions;
 }
 
 const HrAddQuestionForm: FC<HrAddFormProps> = props => {
+  const { orgCode, loading, setOnBoardingQuestions } = props;
   const [isShowingQuestionForm = false, setShowingQuestionForm] = useState();
   const [radio = "", setRadio] = useState();
   const [text = "", setText] = useState();
@@ -66,42 +70,9 @@ const HrAddQuestionForm: FC<HrAddFormProps> = props => {
       if (!err) {
         console.log("Received values of form: ", values);
         if (values.type === "mcq") {
-          firestore()
-            .collection("onboardingQuestions")
-            .doc()
-            .set({
-              question: values.question,
-              orgCode: props.orgCode,
-              important: values.important,
-              type: values.type,
-              options: options
-            })
-            .then(() => {
-              console.log(`Document successfully written! Type ${values.type}`);
-              message.success("Question Written");
-            })
-            .catch(error => {
-              console.error("Error writing document: ", error);
-              message.error("Question not Written");
-            });
+          setOnBoardingQuestions(values, orgCode, options);
         } else {
-          firestore()
-            .collection("onboardingQuestions")
-            .doc()
-            .set({
-              question: values.question,
-              orgCode: props.orgCode,
-              important: values.important,
-              type: values.type
-            })
-            .then(() => {
-              console.log(`Document successfully written! Type ${values.type}`);
-              message.success("Question Written");
-            })
-            .catch(error => {
-              console.error("Error writing document: ", error);
-              message.error("Question not Written");
-            });
+          setOnBoardingQuestions(values, orgCode);
         }
       }
     });
@@ -210,7 +181,11 @@ const HrAddQuestionForm: FC<HrAddFormProps> = props => {
         <Form.Item {...addButtonLayout}>
           <div className={Styles.addOptionWrapper}>
             <div>
-              <Button className={Styles.button} htmlType="submit">
+              <Button
+                className={Styles.button}
+                htmlType="submit"
+                loading={loading}
+              >
                 Add
               </Button>
               <Button className={Styles.button} onClick={cancelHandler}>
@@ -231,16 +206,25 @@ const HrAddQuestionForm: FC<HrAddFormProps> = props => {
 
 interface HrAddProps {
   orgCode: string;
+  loading: boolean;
+  setOnBoardingQuestions: typeof setOnBoardingQuestions;
 }
 const QuestionForm: FC<HrAddProps> = props => {
   let ConnectedComponent = Form.create<HrAddFormProps>()(HrAddQuestionForm);
-  return <ConnectedComponent orgCode={props.orgCode} />; //Doubt
+  return (
+    <ConnectedComponent
+      orgCode={props.orgCode}
+      loading={props.loading}
+      setOnBoardingQuestions={props.setOnBoardingQuestions}
+    />
+  );
 };
 
-const mapStateToProps = (state: RootState) => {};
+const mapStateToProps = (state: RootState) => {
+  const { loading } = state.Hr;
+  return loading;
+};
 
-export default connect()(QuestionForm);
-
-// Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function.
-//     in HrAddQuestionForm (created by Form(HrAddQuestionForm))
-//     in Form(HrAddQuestionForm) (at QuestionForm.tsx:234)
+export default connect(mapStateToProps, { setOnBoardingQuestions })(
+  QuestionForm
+);

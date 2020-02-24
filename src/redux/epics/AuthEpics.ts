@@ -1,13 +1,6 @@
 import { RootEpic } from ".";
 import { of, from } from "rxjs";
-import {
-  filter,
-  switchMap,
-  map,
-  catchError,
-  mapTo,
-  withLatestFrom
-} from "rxjs/operators";
+import { filter, switchMap, map, catchError, mapTo } from "rxjs/operators";
 import { isOfType } from "typesafe-actions";
 import {
   AuthActionType,

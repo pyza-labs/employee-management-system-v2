@@ -3,10 +3,10 @@ import "./App.css";
 import { message as ShowMessage } from "antd";
 import LoginPage from "../LoginPage/LoginPage";
 import Navbar from "../../components/Navbar/Navbar";
-import { Router } from "@reach/router";
+import { Router, Redirect } from "@reach/router";
 import SignUp from "../SignUp/SignUp";
-// import EmployeeHome from "../Employee/EmployeeHome/EmployeeHome";
-// import HrHome from "../HR/HrHome/HrHome";
+import EmployeeHome from "../Employee/EmployeeHome/EmployeeHome";
+import HrHome from "../HR/HrHome/HrHome";
 import { User } from "../../repos";
 import { listenToAuthState, RootState } from "../../redux";
 import { connect } from "react-redux";
@@ -20,23 +20,21 @@ interface AppProps {
 }
 
 export enum Routes {
-  Home = "home",
+  Home = "/",
   ForgotPassword = "forgot-password",
-  UserHr = "hr-home",
-  UserEmployee = "employee-home",
   SignUp = "sign-up"
 }
 
-// const homeSwitch = (role: string): JSX.Element | null => {
-//   switch (role) {
-//     case "hr":
-//       return <HrHome path={Routes.UserHr} />;
-//     case "employee":
-//       return <EmployeeHome path={Routes.UserEmployee} />;
-//     default:
-//       return null;
-//   }
-// };
+const homeSwitch = (role: string): JSX.Element | null => {
+  switch (role) {
+    case "hr":
+      return <HrHome path={Routes.Home} />;
+    case "employee":
+      return <EmployeeHome path={Routes.Home} />;
+    default:
+      return null;
+  }
+};
 
 const App: FC<AppProps> = props => {
   const { listenToAuthState, error, message, currentUser } = props;
@@ -78,10 +76,8 @@ const App: FC<AppProps> = props => {
 
   return (
     <div>
-      <Router>
-        <Navbar />
-        {/* {homeSwitch(currentUser.role)} */}
-      </Router>
+      <Navbar />
+      <Router>{homeSwitch(currentUser.role)}</Router>
     </div>
   );
 };

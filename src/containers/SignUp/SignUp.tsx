@@ -10,7 +10,6 @@ import {
   Icon,
   message
 } from "antd";
-import { auth, firestore, storage } from "firebase";
 import { RouteComponentProps } from "@reach/router";
 import { FormComponentProps } from "antd/lib/form";
 import { UploadProps } from "antd/lib/upload";
