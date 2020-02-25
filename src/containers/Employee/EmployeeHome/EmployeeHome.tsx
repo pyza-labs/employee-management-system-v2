@@ -96,15 +96,7 @@ const EmployeeHome: FC<EmployeeProps> = props => {
                                 )}
                               </div>
                             }
-                            description={
-                              <EmployeeAnswers
-                                question={item}
-                                currentUser={currentUser}
-                                saveStatus={(status: boolean): void =>
-                                  setSaveStatus(status)
-                                }
-                              />
-                            }
+                            description={<EmployeeAnswers question={item} />}
                           />
                         </Skeleton>
                       </List.Item>
@@ -122,7 +114,7 @@ const EmployeeHome: FC<EmployeeProps> = props => {
 
 const mapStateToProps = (state: RootState) => {
   const { currentUser } = state.Auth;
-  const { questions, loading } = state.Hr;
+  const { questions, loading } = state.HR;
   return { currentUser, questions, loading };
 };
 

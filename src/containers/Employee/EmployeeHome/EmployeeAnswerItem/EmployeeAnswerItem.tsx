@@ -4,40 +4,59 @@ import { Input, message, Upload, Button, Icon, Radio, Tag } from "antd";
 import { firestore, storage } from "firebase";
 import debounce from "lodash.debounce";
 import { UploadProps } from "antd/lib/upload";
-import { Question, User } from "../../../../repos";
+import { Question } from "../../../../repos";
 import { RadioChangeEvent } from "antd/lib/radio/interface";
 import { connect } from "react-redux";
+import { RootState } from "../../../../redux";
+import {
+  listenToEmployeeAnswers,
+  updateEmployeeAnswer,
+  uploadDocuments,
+  saveStatus
+} from "../../../../redux/actions";
+import { EmployeeQA } from "../../../../repos";
 
 interface EmpAnswerProps {
   question: Question;
-  currentUser?: User | null;
-  saveStatus(status: boolean): void;
+  saveStatus: typeof saveStatus;
+  userId?: string;
+  employeeQA?: EmployeeQA;
+  listenToEmployeeAnswers: typeof listenToEmployeeAnswers; // Not giving error in employeeHome
+  updateEmployeeAnswer: typeof updateEmployeeAnswer;
+  uploadDocuments: typeof uploadDocuments;
 }
 
-export interface empDocData {
-  id: string;
-  question: string;
-  answer: string;
-}
 const EmployeeAnswerItem: FC<EmpAnswerProps> = props => {
-  const { question, currentUser, saveStatus } = props;
+  const {
+    question,
+    userId,
+    saveStatus,
+    employeeQA,
+    listenToEmployeeAnswers,
+    updateEmployeeAnswer,
+    uploadDocuments
+  } = props;
 
   const [text = "", setText] = useState();
   const [radio = "", setRadio] = useState();
 
   useEffect(() => {
-    if (!currentUser || !currentUser.id || !props.question.question) {
+    if (!userId || !props.question.question) {
+      return;
+    }
+    listenToEmployeeAnswers(userId, question.id);
+    if (!employeeQA) {
       return;
     }
     switch (props.question.type) {
       case "text":
-        setText(props.answer);
+        setText(employeeQA.answer);
         break;
       case "mcq":
-        setRadio(props.answer);
+        setRadio(employeeQA.answer);
         break;
       case "file":
-        setText(props.answer);
+        setText(employeeQA.answer);
         break;
       default:
     }
@@ -52,66 +71,48 @@ const EmployeeAnswerItem: FC<EmpAnswerProps> = props => {
     };
   };
 
-  const firestoreData = (text: string): void => {
-    if (!currentUser || !currentUser.id) {
-      return;
-    }
-    firestore()
-      .collection("users")
-      .doc(currentUser.id)
-      .collection("onboardingAnswers")
-      .doc(props.question.id)
-      .set(
-        {
-          question: props.question.question,
-          answer: text
-        },
-        { merge: true }
-      )
-      .then(() => {
-        console.log("Document successfully updated!");
-        props.saveStatus(true);
-      })
-      .catch(error => {
-        // The document probably doesn't exist.
-        console.error("Error updating document: ", error);
-      });
-  };
-
   const inputHandler = (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.value);
-    props.saveStatus(false);
+    saveStatus(false);
     setText(event.target.value);
-    firestoreData(event.target.value);
+    if (!userId) {
+      return;
+    }
+    updateEmployeeAnswer(
+      event.target.value,
+      userId,
+      question.id,
+      question.question
+    );
   };
 
   const radioHandler = (event: RadioChangeEvent) => {
     setRadio(event.target.value);
-    props.saveStatus(false);
-    firestoreData(event.target.value);
+    saveStatus(false);
+    if (!userId) {
+      return;
+    }
+    updateEmployeeAnswer(
+      event.target.value,
+      userId,
+      question.id,
+      question.question
+    );
   };
 
   const uploadAttributes: UploadProps = {
     name: "file",
     customRequest: async ({ onError, onSuccess, file }) => {
-      const storageRef = storage().ref();
-      const metadata = {
-        contentType: "image/jpeg" || "application/pdf"
-      };
-      if (!currentUser) {
+      if (!userId) {
         return;
       }
-      const uploadTask = storageRef.child(
-        `users/${currentUser.id}/answer/${props.question.id}`
+      uploadDocuments(file, userId, question.id);
+      updateEmployeeAnswer(
+        "File Uploaded",
+        userId,
+        question.id,
+        question.question
       );
-      try {
-        const image = await uploadTask.put(file, metadata);
-        onSuccess({}, file);
-        firestoreData("File Uploaded");
-        props.saveStatus(true);
-      } catch (error) {
-        onError(error);
-      }
     },
     headers: {
       authorization: "authorization-text"
@@ -200,6 +201,19 @@ const EmployeeAnswerItem: FC<EmpAnswerProps> = props => {
   return render();
 };
 
-const mapStateToProps = () => {};
+const mapStateToProps = (state: RootState) => {
+  const { currentUser } = state.Auth;
+  if (!currentUser) {
+    return;
+  }
+  const userId = currentUser.id;
+  const { employeeQA } = state.Employee;
+  return { userId, employeeQA };
+};
 
-export default connect(mapStateToProps, {})(EmployeeAnswerItem);
+export default connect(mapStateToProps, {
+  listenToEmployeeAnswers,
+  updateEmployeeAnswer,
+  uploadDocuments,
+  saveStatus
+})(EmployeeAnswerItem);

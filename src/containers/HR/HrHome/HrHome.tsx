@@ -1,26 +1,26 @@
 import React, { useState, useEffect, FC } from "react";
-import Styles from "./HrHome.module.css";
+import Styles from "./HRHome.module.css";
 import { Layout, Menu, Icon } from "antd";
 import ProgressBar from "./ProgressBar/ProgressBar";
 import QuestionTable from "./QuestionsTable/QuestionTable";
 import QuestionForm from "./QuestionForm/QuestionForm";
 import { connect } from "react-redux";
-import { RootState, listenToHrQuestions } from "../../../redux";
+import { RootState, listenToHRQuestions } from "../../../redux";
 import { Question } from "../../../repos";
 import { RouteComponentProps } from "@reach/router";
 
 const { SubMenu } = Menu;
 const { Content, Sider } = Layout;
 
-interface HrProps extends RouteComponentProps {
+interface HRProps extends RouteComponentProps {
   orgCode: string;
   questions?: Question[];
   loading: boolean;
-  listenToHrQuestions: typeof listenToHrQuestions;
+  listenToHRQuestions: typeof listenToHRQuestions;
 }
 
-const HrHome: FC<HrProps> = props => {
-  const { orgCode, questions, listenToHrQuestions, loading } = props;
+const HRHome: FC<HRProps> = props => {
+  const { orgCode, questions, listenToHRQuestions, loading } = props;
   const [onQuestions = false, setOnQuestions] = useState();
   const [progress = false, setProgress] = useState();
 
@@ -30,8 +30,8 @@ const HrHome: FC<HrProps> = props => {
     if (!orgCode) {
       return;
     }
-    listenToHrQuestions(orgCode);
-  }, [orgCode, listenToHrQuestions]);
+    listenToHRQuestions(orgCode);
+  }, [orgCode, listenToHRQuestions]);
 
   const showQuestionsHandler = (): void => {
     setOnQuestions(true);
@@ -113,17 +113,17 @@ const HrHome: FC<HrProps> = props => {
 
 const mapStateToProps = (state: RootState) => {
   const { currentUser } = state.Auth;
-  const { questions, loading } = state.Hr;
+  const { questions, loading } = state.HR;
   const orgCode = currentUser!.orgCode;
   return { orgCode, questions, loading };
 };
 
-export default connect(mapStateToProps, { listenToHrQuestions })(HrHome);
+export default connect(mapStateToProps, { listenToHRQuestions })(HRHome);
 
 // useEffect(() => {
 //   if (!orgCode) {
 //     return;
 //   }
-//   let unsubscribe =listenToHrQuestions(orgCode);
+//   let unsubscribe =listenToHRQuestions(orgCode);
 //   return unsubscribe;
-// }, [orgCode,listenToHrQuestions]);
+// }, [orgCode,listenToHRQuestions]);

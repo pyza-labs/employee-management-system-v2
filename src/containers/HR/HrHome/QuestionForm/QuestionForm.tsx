@@ -1,26 +1,24 @@
 import React, { useState, FC, ChangeEventHandler, FormEvent } from "react";
 import Styles from "./QuestionForm.module.css";
-import { firestore } from "firebase";
-import { Icon, Input, Button, Switch, Form, Radio, message } from "antd";
+import { Icon, Input, Button, Switch, Form, Radio } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import { RadioChangeEvent } from "antd/lib/radio";
 import { connect } from "react-redux";
 import { RootState, setOnBoardingQuestions } from "../../../../redux";
-import { OmitProps } from "antd/lib/transfer/renderListBody";
 
-export interface FormDataHrQuestions {
+export interface FormDataHRQuestions {
   question: string;
   important: string;
   type: string;
 }
 
-interface HrAddFormProps extends FormComponentProps<FormDataHrQuestions> {
+interface HRAddFormProps extends FormComponentProps<FormDataHRQuestions> {
   orgCode: string;
   loading?: boolean;
   setOnBoardingQuestions: typeof setOnBoardingQuestions;
 }
 
-const HrAddQuestionForm: FC<HrAddFormProps> = props => {
+const HRAddQuestionForm: FC<HRAddFormProps> = props => {
   const { orgCode, loading, setOnBoardingQuestions } = props;
   const [isShowingQuestionForm = false, setShowingQuestionForm] = useState();
   const [radio = "", setRadio] = useState();
@@ -204,13 +202,13 @@ const HrAddQuestionForm: FC<HrAddFormProps> = props => {
   );
 };
 
-interface HrAddProps {
+interface HRAddProps {
   orgCode: string;
   loading: boolean;
   setOnBoardingQuestions: typeof setOnBoardingQuestions;
 }
-const QuestionForm: FC<HrAddProps> = props => {
-  let ConnectedComponent = Form.create<HrAddFormProps>()(HrAddQuestionForm);
+const QuestionForm: FC<HRAddProps> = props => {
+  let ConnectedComponent = Form.create<HRAddFormProps>()(HRAddQuestionForm);
   return (
     <ConnectedComponent
       orgCode={props.orgCode}
@@ -221,7 +219,7 @@ const QuestionForm: FC<HrAddProps> = props => {
 };
 
 const mapStateToProps = (state: RootState) => {
-  const { loading } = state.Hr;
+  const { loading } = state.HR;
   return loading;
 };
 

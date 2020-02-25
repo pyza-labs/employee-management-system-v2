@@ -2,20 +2,27 @@ import { RootEpic } from ".";
 import { of, from } from "rxjs";
 import { filter, switchMap, map, catchError, mapTo } from "rxjs/operators";
 import { isOfType } from "typesafe-actions";
-import { HrActionType, setError, setMessage, setQuestions } from "../actions";
 import {
-  listenToHrQuestions,
-  updateImportantHandler,
-  deleteQuestionHandler,
+  HRActionType,
+  setError,
+  setMessage,
+  setQuestions,
+  setEmployeeProgress
+} from "../actions";
+import {
+  listenToHRQuestions,
+  updateImportant,
+  deleteQuestion,
   setOnBoardingQuestions
+  // listenToEmployeeProgress
 } from "../../repos";
 
-export const listenToHrQuestionsEpic: RootEpic = action$ => {
+export const listenToHRQuestionsEpic: RootEpic = action$ => {
   return action$.pipe(
-    filter(isOfType(HrActionType.ListenToHrQuestions)),
+    filter(isOfType(HRActionType.ListenToHRQuestions)),
     switchMap(action => {
       const { orgCode } = action.payload;
-      return listenToHrQuestions(orgCode).pipe(
+      return listenToHRQuestions(orgCode).pipe(
         map(questions => setQuestions(questions)),
         catchError(error => of(setError(error.message)))
       );
@@ -25,10 +32,10 @@ export const listenToHrQuestionsEpic: RootEpic = action$ => {
 
 export const updateQuestionEpic: RootEpic = action$ => {
   return action$.pipe(
-    filter(isOfType(HrActionType.UpdateImportantStatus)),
+    filter(isOfType(HRActionType.UpdateImportantStatus)),
     switchMap(action => {
       const { checked, docId } = action.payload;
-      return updateImportantHandler(checked, docId).pipe(
+      return updateImportant(checked, docId).pipe(
         mapTo(setMessage("Question Updated Successfully")),
         catchError(error => of(setError(error.message)))
       );
@@ -38,10 +45,10 @@ export const updateQuestionEpic: RootEpic = action$ => {
 
 export const deleteQuestionEpic: RootEpic = action$ => {
   return action$.pipe(
-    filter(isOfType(HrActionType.DeleteQuestion)),
+    filter(isOfType(HRActionType.DeleteQuestion)),
     switchMap(action => {
       const { docId } = action.payload;
-      return deleteQuestionHandler(docId).pipe(
+      return deleteQuestion(docId).pipe(
         mapTo(setMessage("Question Deleted Succeefully")),
         catchError(error => of(setError(error.message)))
       );
@@ -51,7 +58,7 @@ export const deleteQuestionEpic: RootEpic = action$ => {
 
 export const setOnBoardingQuestionsEpic: RootEpic = action$ => {
   return action$.pipe(
-    filter(isOfType(HrActionType.SetOnBoardingQuestions)),
+    filter(isOfType(HRActionType.SetOnBoardingQuestions)),
     switchMap(action => {
       const { values, orgCode, options } = action.payload;
       return setOnBoardingQuestions(values, orgCode, options).pipe(
@@ -61,4 +68,17 @@ export const setOnBoardingQuestionsEpic: RootEpic = action$ => {
     })
   );
 };
+
+// export const listenToEmployeeProgressEpic: RootEpic = action$ => {
+//   return action$.pipe(
+//     filter(isOfType(HRActionType.ListenToEmployeeProgress)),
+//     switchMap(action => {
+//       const { orgCode } = action.payload;
+//       return listenToEmployeeProgress(orgCode).pipe(
+//         map(employeeProgress => setEmployeeProgress(employeeProgress)),
+//         catchError(error => of(setError(error.message)))
+//       );
+//     })
+//   );
+// };
 // message.success("Question deleted successfully");

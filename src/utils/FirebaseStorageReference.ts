@@ -5,5 +5,9 @@ export const FirebaseStorageReference = {
     storage()
       .ref()
       .child("profile-pictures")
-      .child(fileName)
+      .child(fileName),
+  UploadDocuments: (fileName: string, userId: string, questionId: string) =>
+    storage()
+      .ref()
+      .child(`users/${userId}/answer/${questionId}`)
 };

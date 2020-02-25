@@ -1,9 +1,9 @@
 import { AuthAction } from "./AuthActions";
-import { HrAction } from "./HrActions";
+import { HRAction } from "./HRActions";
 import { EmployeeAction } from "./EmployeeActions";
 
-export * from "./HrActions";
+export * from "./HRActions";
 export * from "./AuthActions";
 export * from "./EmployeeActions";
 
-export type RootAction = AuthAction | HrAction | EmployeeAction;
+export type RootAction = AuthAction | HRAction | EmployeeAction;

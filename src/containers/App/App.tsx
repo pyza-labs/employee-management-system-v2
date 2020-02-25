@@ -6,7 +6,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import { Router, Redirect } from "@reach/router";
 import SignUp from "../SignUp/SignUp";
 import EmployeeHome from "../Employee/EmployeeHome/EmployeeHome";
-import HrHome from "../HR/HrHome/HrHome";
+import HRHome from "../HR/HRHome/HRHome";
 import { User } from "../../repos";
 import { listenToAuthState, RootState } from "../../redux";
 import { connect } from "react-redux";
@@ -28,7 +28,7 @@ export enum Routes {
 const homeSwitch = (role: string): JSX.Element | null => {
   switch (role) {
     case "hr":
-      return <HrHome path={Routes.Home} />;
+      return <HRHome path={Routes.Home} />;
     case "employee":
       return <EmployeeHome path={Routes.Home} />;
     default:

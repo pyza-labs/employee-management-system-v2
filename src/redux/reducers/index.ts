@@ -1,15 +1,16 @@
 import { AuthStateType, AuthStateReducer } from "./AuthReducer";
-import { HrStateType, HrStateReducer } from "./HrReducer";
+import { HRStateType, HRStateReducer } from "./HRReducer";
 import { EmployeeStateType, EmployeeStateReducer } from "./EmployeeReducer";
 import { combineReducers } from "redux";
 
 export const combinedReducer = combineReducers({
   Auth: AuthStateReducer,
-  Hr: HrStateReducer,
+  HR: HRStateReducer,
   Employee: EmployeeStateReducer
 });
 
 export interface RootState {
   Auth: AuthStateType;
-  Hr: HrStateType;
+  HR: HRStateType;
+  Employee: EmployeeStateType;
 }

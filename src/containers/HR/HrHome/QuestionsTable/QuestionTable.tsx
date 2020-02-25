@@ -90,7 +90,7 @@ const QuestionTable = (props: TableProps) => {
 };
 
 const mapStateToProps = (state: RootState) => {
-  const { loading } = state.Hr;
+  const { loading } = state.HR;
   return loading;
 };
 

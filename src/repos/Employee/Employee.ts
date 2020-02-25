@@ -1,6 +1,11 @@
-import { FirestoreCollectionReference } from "../../utils";
-import { Observable } from "rxjs";
+import {
+  FirestoreCollectionReference,
+  FirebaseStorageReference
+} from "../../utils";
+import { Observable, from, zip } from "rxjs";
 import { Question } from "../User";
+import { storage } from "firebase";
+import { EmployeeQA } from "../User/EmployeeQA";
 
 export const listenToEmployeeQuestions = (
   orgCode: string
@@ -24,18 +29,74 @@ export const listenToEmployeeQuestions = (
   });
 };
 
-export const listenToEmployeeAnswers = (userId: string, questionId: string) =>
-  FirestoreCollectionReference.Users()
-    .doc(userId)
-    .collection("onboardingAnswers")
-    .doc(questionId)
-    .onSnapshot(documentSnapshot => {
-      if (documentSnapshot.data()) {
-        const documentData: empDocData = {
-          question: documentSnapshot.data()!.question,
-          id: documentSnapshot.id,
-          answer: documentSnapshot.data()!.answer
-        };
-        const { answer } = documentData;
-      }
-    });
+export const listenToEmployeeAnswers = (
+  userId: string,
+  questionId: string
+): Observable<EmployeeQA> => {
+  return new Observable<EmployeeQA>(observer => {
+    FirestoreCollectionReference.Users()
+      .doc(userId)
+      .collection("onboardingAnswers")
+      .doc(questionId)
+      .onSnapshot(
+        documentSnapshot => {
+          if (documentSnapshot.data()) {
+            const documentData: EmployeeQA = {
+              question: documentSnapshot.data()!.question,
+              id: documentSnapshot.id,
+              answer: documentSnapshot.data()!.answer
+            };
+            observer.next(documentData);
+          }
+        },
+        error => observer.error(error)
+      );
+  });
+};
+
+export const updateEmployeeAnswer = (
+  text: string,
+  userId: string,
+  questionId: string,
+  question: string
+) => {
+  return from(
+    FirestoreCollectionReference.Users()
+      .doc(userId)
+      .collection("onboardingAnswers")
+      .doc(questionId)
+      .set(
+        {
+          question: question,
+          answer: text
+        },
+        { merge: true }
+      )
+  );
+};
+
+export const uploadDocuments = (
+  file: File,
+  userId: string,
+  questionId: string
+) => {
+  return new Observable<storage.UploadTaskSnapshot>(observer => {
+    const metadata = {
+      contentType: "image/jpeg" || "application/pdf"
+    };
+    FirebaseStorageReference.UploadDocuments(file.name, userId, questionId)
+      .put(file, metadata)
+      .on(
+        storage.TaskEvent.STATE_CHANGED,
+        snapshot => {
+          observer.next(snapshot);
+        },
+        error => {
+          observer.error(error);
+        },
+        () => {
+          observer.complete();
+        }
+      );
+  });
+};

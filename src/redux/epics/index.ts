@@ -11,13 +11,18 @@ import {
 } from "./AuthEpics";
 
 import {
-  listenToHrQuestionsEpic,
+  listenToHRQuestionsEpic,
   deleteQuestionEpic,
   updateQuestionEpic,
   setOnBoardingQuestionsEpic
-} from "./HrEpics";
+} from "./HREpics";
 
-import { listenToEmployeeQuestionsEpic } from "./EmployeeEpics";
+import {
+  listenToEmployeeQuestionsEpic,
+  listenToEmployeeAnswersEpic,
+  updateEmployeeAnswerEpic,
+  uploadDocumentsEpic
+} from "./EmployeeEpics";
 
 export default combineEpics(
   listenToAuthStateEpic,
@@ -25,11 +30,14 @@ export default combineEpics(
   signInEpic,
   resetPasswordEpic,
   signUpEpic,
-  listenToHrQuestionsEpic,
+  listenToHRQuestionsEpic,
   deleteQuestionEpic,
   updateQuestionEpic,
   setOnBoardingQuestionsEpic,
-  listenToEmployeeQuestionsEpic
+  listenToEmployeeQuestionsEpic,
+  listenToEmployeeAnswersEpic,
+  updateEmployeeAnswerEpic,
+  uploadDocumentsEpic
 );
 
 export type RootEpic = Epic<RootAction, RootAction, RootState>;
