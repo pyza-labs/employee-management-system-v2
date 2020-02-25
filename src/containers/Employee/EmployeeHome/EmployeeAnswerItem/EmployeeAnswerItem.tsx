@@ -1,7 +1,6 @@
 import React, { useState, useEffect, Fragment, FC, ChangeEvent } from "react";
 import Styles from "./EmployeeAnswerItem.module.css";
 import { Input, message, Upload, Button, Icon, Radio, Tag } from "antd";
-import { firestore, storage } from "firebase";
 import debounce from "lodash.debounce";
 import { UploadProps } from "antd/lib/upload";
 import { Question } from "../../../../repos";

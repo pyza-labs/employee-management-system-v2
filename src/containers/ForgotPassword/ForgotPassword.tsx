@@ -1,9 +1,10 @@
 import React, { FC, useState, ChangeEvent } from "react";
 import Styles from "./ForgotPassword.module.css";
-import { RouteComponentProps } from "@reach/router";
+import { RouteComponentProps, Link } from "@reach/router";
 import { connect } from "react-redux";
 import { resetPassword } from "../../redux";
 import { Layout, Input, Button } from "antd";
+import { Routes } from "../App/App";
 
 const { Header, Content, Footer } = Layout;
 
@@ -20,14 +21,19 @@ const ForgotPassword: FC<ForgotPasswordProps> = (props): JSX.Element => {
   return (
     <Layout>
       <Content className={Styles.content}>
-        <div>
+        <div className={Styles.mainWrapper}>
           <span>Please Enter Your Registered email</span>
           <Input
             className={Styles.input}
             onChange={emailHandler}
             placeholder="Enter Email"
           ></Input>
-          <Button onClick={() => props.resetPassword(email)}>Submit</Button>
+          <div className={Styles.buttonLinkWrapper}>
+            <Button onClick={() => props.resetPassword(email)}>Submit</Button>
+            <Link className={Styles.forgot} to={Routes.Home}>
+              SignIn
+            </Link>
+          </div>
         </div>
       </Content>
       <Footer className={Styles.footer}>Pyza Labs ©2020</Footer>

@@ -1,6 +1,6 @@
 import { firestore } from "firebase";
 
-enum FirestoreCollection {
+export enum FirestoreCollection {
   Users = "users",
   OnBoardQuestions = "onboardingQuestions"
 }

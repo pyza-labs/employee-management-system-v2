@@ -15,6 +15,7 @@ interface EmployeeProps extends RouteComponentProps {
   listenToEmployeeQuestions: typeof listenToEmployeeQuestions;
   loading: boolean;
   questions?: Question[];
+  status?: boolean;
 }
 
 const EmployeeHome: FC<EmployeeProps> = props => {
@@ -22,14 +23,14 @@ const EmployeeHome: FC<EmployeeProps> = props => {
     currentUser,
     loading,
     listenToEmployeeQuestions,
-    questions = []
+    questions,
+    status
   } = props;
 
   const [
     selectedOption = "Onboarding Questions",
     setSelectedOption
   ] = useState();
-  const [saveStatus = false, setSaveStatus] = useState();
 
   useEffect(() => {
     if (!currentUser || currentUser.orgCode) {
@@ -76,10 +77,8 @@ const EmployeeHome: FC<EmployeeProps> = props => {
           <Layout style={{ padding: "0 24px 24px" }}>
             <h1 style={{ margin: "16px 0" }}>{selectedOption}</h1>
             <Content className={Styles.content}>
-              <div className={Styles.savedWrapper}>
-                {saveStatus ? "Saved" : ""}
-              </div>
-              {questions.length !== 0 && (
+              <div className={Styles.savedWrapper}>{status ? "Saved" : ""}</div>
+              {questions && questions.length !== 0 && (
                 <List
                   itemLayout="horizontal"
                   dataSource={questions}
@@ -114,8 +113,8 @@ const EmployeeHome: FC<EmployeeProps> = props => {
 
 const mapStateToProps = (state: RootState) => {
   const { currentUser } = state.Auth;
-  const { questions, loading } = state.HR;
-  return { currentUser, questions, loading };
+  const { questions, loading, status } = state.Employee;
+  return { currentUser, questions, loading, status };
 };
 
 export default connect(mapStateToProps, { listenToEmployeeQuestions })(

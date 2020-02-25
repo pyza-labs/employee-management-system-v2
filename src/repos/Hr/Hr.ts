@@ -1,7 +1,11 @@
-import { FirestoreCollectionReference } from "../../utils";
-import { Question, EmployeeQA, EmployeeProgress } from "../User";
+import {
+  FirestoreCollectionReference,
+  firestoreQueryListener
+} from "../../utils";
+import { Question, EmployeeQA, EmployeeProgress, User } from "../User";
 import { Observable, from, zip, combineLatest } from "rxjs";
 import { FormDataHRQuestions } from "../../containers/HR/HRHome/QuestionForm/QuestionForm";
+import { switchMap, map } from "rxjs/operators";
 
 export const listenToHRQuestions = (
   orgCode: string
@@ -77,42 +81,33 @@ export const setOnBoardingQuestions = (
   }
 };
 
-// export const listenToEmployeeProgress = (orgCode: string) => {
-//   return new Observable<>(observer =>
-//     FirestoreCollectionReference.Users()
-//       .where("orgCode", "==", orgCode)
-//       .where("role", "==", "employee")
-//       .onSnapshot(querySnapshot => {
-//         const employeeProgress = querySnapshot.docs.map(mainDoc => {
-//           const { name } = mainDoc.data();
-//           return new Observable<EmployeeQA[]>(observer => {
-//             FirestoreCollectionReference.Users()
-//               .doc(mainDoc.id)
-//               .collection("onboardingAnswers")
-//               .get()
-//               .then(querySnapshot => {
-//                 const response: EmployeeQA[] = querySnapshot.docs.map(doc => {
-//                   // mainDoc.data() is never undefined for query mainDoc snapshots
-//                   return {
-//                     question: doc.data().question,
-//                     id: doc.id,
-//                     answer: doc.data().answer
-//                   };
-//                 });
-//                 observer.next(response);
-//                 return {
-//                   userId: mainDoc.id,
-//                   name: name,
-//                   response: response
-//                 } as EmployeeProgress;
-//               });
-//           });
-//         });
-//       })
-//   );
-// };
+export const listenToEmployeeProgress = (
+  orgCode: string
+): Observable<EmployeeProgress[]> => {
+  return firestoreQueryListener<User>(
+    FirestoreCollectionReference.Users()
+      .where("orgCode", "==", orgCode)
+      .where("role", "==", "employee")
+  ).pipe(
+    switchMap(users => {
+      const userQuestions = users.map(user =>
+        firestoreQueryListener<EmployeeQA>(
+          FirestoreCollectionReference.Users()
+            .doc(user.id)
+            .collection("onboardingAnswers")
+        ).pipe(
+          map(employeeQAs => ({
+            userId: user.id,
+            name: user.name,
+            response: employeeQAs
+          }))
+        )
+      );
+      return combineLatest(userQuestions);
+    })
+  );
+};
 
-//HR to HR
 // Signin link with Signup and forgot password
 // Not signed remove menu
 //upload and setFire in one

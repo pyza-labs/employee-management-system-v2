@@ -13,25 +13,17 @@ const { SubMenu } = Menu;
 const { Content, Sider } = Layout;
 
 interface HRProps extends RouteComponentProps {
-  orgCode: string;
+  orgCode?: string;
   questions?: Question[];
-  loading: boolean;
   listenToHRQuestions: typeof listenToHRQuestions;
 }
 
 const HRHome: FC<HRProps> = props => {
-  const { orgCode, questions, listenToHRQuestions, loading } = props;
+  const { orgCode, questions = [] } = props;
   const [onQuestions = false, setOnQuestions] = useState();
   const [progress = false, setProgress] = useState();
 
   const [selectedOption = "Questions", setSelectedOption] = useState();
-
-  useEffect(() => {
-    if (!orgCode) {
-      return;
-    }
-    listenToHRQuestions(orgCode);
-  }, [orgCode, listenToHRQuestions]);
 
   const showQuestionsHandler = (): void => {
     setOnQuestions(true);
@@ -89,13 +81,8 @@ const HRHome: FC<HRProps> = props => {
             <h1 className={Styles.selectedOption}>{selectedOption}</h1>
             {onQuestions && (
               <Content className={Styles.content}>
-                <QuestionForm loading={loading} orgCode={orgCode!} />
-                {questions!.length !== 0 && (
-                  <QuestionTable //remove hr
-                    dataSource={questions!}
-                    loading={loading!}
-                  />
-                )}
+                <QuestionForm orgCode={orgCode!} />
+                <QuestionTable />
               </Content>
             )}
             {progress && (
@@ -113,17 +100,9 @@ const HRHome: FC<HRProps> = props => {
 
 const mapStateToProps = (state: RootState) => {
   const { currentUser } = state.Auth;
-  const { questions, loading } = state.HR;
-  const orgCode = currentUser!.orgCode;
-  return { orgCode, questions, loading };
+  const { questions } = state.HR;
+  const orgCode = currentUser ? currentUser.orgCode : undefined;
+  return { orgCode, questions };
 };
 
 export default connect(mapStateToProps, { listenToHRQuestions })(HRHome);
-
-// useEffect(() => {
-//   if (!orgCode) {
-//     return;
-//   }
-//   let unsubscribe =listenToHRQuestions(orgCode);
-//   return unsubscribe;
-// }, [orgCode,listenToHRQuestions]);

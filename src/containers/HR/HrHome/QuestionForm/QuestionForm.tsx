@@ -220,7 +220,7 @@ const QuestionForm: FC<HRAddProps> = props => {
 
 const mapStateToProps = (state: RootState) => {
   const { loading } = state.HR;
-  return loading;
+  return { loading };
 };
 
 export default connect(mapStateToProps, { setOnBoardingQuestions })(

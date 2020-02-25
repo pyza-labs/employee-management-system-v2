@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Icon, Button, Switch, Table, Tag, Popconfirm } from "antd";
 import { ColumnProps } from "antd/lib/table";
 import { Question } from "../../../../repos";
@@ -6,17 +6,35 @@ import { connect } from "react-redux";
 import {
   RootState,
   deleteQuestion,
-  updateImportantStatus
+  updateImportantStatus,
+  listenToHRQuestions
 } from "../../../../redux";
 
 interface TableProps {
   loading: boolean;
-  dataSource: Question[];
+  orgCode?: string;
+  questions?: Question[];
   deleteQuestion: typeof deleteQuestion;
   updateImportantStatus: typeof updateImportantStatus;
+  listenToHRQuestions: typeof listenToHRQuestions;
 }
 const QuestionTable = (props: TableProps) => {
-  const { loading, dataSource, deleteQuestion, updateImportantStatus } = props;
+  const {
+    loading,
+    questions,
+    orgCode,
+    deleteQuestion,
+    updateImportantStatus,
+    listenToHRQuestions
+  } = props;
+
+  useEffect(() => {
+    if (!orgCode) {
+      console.error("Org code not found");
+      return;
+    }
+    listenToHRQuestions(orgCode);
+  }, [orgCode, listenToHRQuestions]);
 
   const columns: ColumnProps<Question>[] = [
     {
@@ -82,7 +100,7 @@ const QuestionTable = (props: TableProps) => {
   return (
     <Table
       columns={columns}
-      dataSource={dataSource}
+      dataSource={questions}
       loading={loading}
       pagination={false}
     ></Table>
@@ -90,11 +108,17 @@ const QuestionTable = (props: TableProps) => {
 };
 
 const mapStateToProps = (state: RootState) => {
-  const { loading } = state.HR;
-  return loading;
+  const { currentUser } = state.Auth;
+  const { loading, questions } = state.HR;
+  return {
+    loading,
+    questions,
+    orgCode: currentUser ? currentUser.orgCode : undefined
+  };
 };
 
 export default connect(mapStateToProps, {
   deleteQuestion,
-  updateImportantStatus
+  updateImportantStatus,
+  listenToHRQuestions
 })(QuestionTable);
