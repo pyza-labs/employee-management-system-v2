@@ -1,6 +1,5 @@
 import { action, ActionType } from "typesafe-actions";
-import { Question } from "../../repos";
-import { EmployeeQA } from "../../repos/User/EmployeeQA";
+import { Question, Answer } from "../../repos";
 
 export enum EmployeeActionType {
   ListenToEmployeeQuestions = "EmployeeActionType/ListenToEmployeeQuestions",
@@ -21,7 +20,7 @@ export const setEmployeeQuestions = (questions: Question[]) =>
 export const listenToEmployeeAnswers = (userId: string, questionId: string) =>
   action(EmployeeActionType.ListenToEmployeeAnswers, { userId, questionId });
 
-export const setEmployeeAnswersWithQuestion = (employeeQA: EmployeeQA) =>
+export const setEmployeeAnswersWithQuestion = (employeeQA: Answer) =>
   action(EmployeeActionType.SetEmployeeAnswersWithQuestion, { employeeQA });
 
 export const uploadDocuments = (

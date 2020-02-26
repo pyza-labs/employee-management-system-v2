@@ -1,11 +1,11 @@
 import { produce } from "immer";
 import { EmployeeActionType, EmployeeAction } from "../actions/EmployeeActions";
-import { Question, EmployeeQA } from "../../repos";
+import { Question, Answer } from "../../repos";
 
 export interface EmployeeStateType {
   readonly loading: boolean;
   readonly questions?: Question[];
-  readonly employeeQA?: EmployeeQA;
+  readonly employeeQA?: Answer;
   readonly status?: boolean;
 }
 

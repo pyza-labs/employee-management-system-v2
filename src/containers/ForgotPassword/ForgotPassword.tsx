@@ -23,16 +23,18 @@ const ForgotPassword: FC<ForgotPasswordProps> = (props): JSX.Element => {
       <Content className={Styles.content}>
         <div className={Styles.mainWrapper}>
           <span>Please Enter Your Registered email</span>
-          <Input
-            className={Styles.input}
-            onChange={emailHandler}
-            placeholder="Enter Email"
-          ></Input>
-          <div className={Styles.buttonLinkWrapper}>
-            <Button onClick={() => props.resetPassword(email)}>Submit</Button>
-            <Link className={Styles.forgot} to={Routes.Home}>
-              SignIn
-            </Link>
+          <div className={Styles.inputWrapper}>
+            <Input
+              className={Styles.input}
+              onChange={emailHandler}
+              placeholder="Enter Email"
+            ></Input>
+            <div className={Styles.buttonLinkWrapper}>
+              <Button onClick={() => props.resetPassword(email)}>Submit</Button>
+              <Link className={Styles.forgot} to={Routes.Home}>
+                SignIn
+              </Link>
+            </div>
           </div>
         </div>
       </Content>

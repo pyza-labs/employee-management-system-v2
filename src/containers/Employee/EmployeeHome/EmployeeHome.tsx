@@ -1,17 +1,21 @@
 import React, { useState, useEffect, FC } from "react";
 import Styles from "./EmployeeHome.module.css";
 import { Layout, Menu, Icon, List, Skeleton } from "antd";
-import EmployeeAnswers from "./EmployeeAnswerItem/EmployeeAnswerItem";
+import EmployeeAnswers from "./EmployeeAnswerItem";
 import { connect } from "react-redux";
-import { Question, User } from "../../../repos";
-import { RootState, listenToEmployeeQuestions } from "../../../redux";
+import { Question } from "../../../repos";
+import {
+  RootState,
+  listenToEmployeeQuestions,
+  setCurrentUser
+} from "../../../redux";
 import { RouteComponentProps } from "@reach/router";
 
 const { SubMenu } = Menu;
 const { Content, Sider } = Layout;
 
 interface EmployeeProps extends RouteComponentProps {
-  currentUser?: User | null;
+  orgCode?: string;
   listenToEmployeeQuestions: typeof listenToEmployeeQuestions;
   loading: boolean;
   questions?: Question[];
@@ -20,7 +24,7 @@ interface EmployeeProps extends RouteComponentProps {
 
 const EmployeeHome: FC<EmployeeProps> = props => {
   const {
-    currentUser,
+    orgCode,
     loading,
     listenToEmployeeQuestions,
     questions,
@@ -33,11 +37,11 @@ const EmployeeHome: FC<EmployeeProps> = props => {
   ] = useState();
 
   useEffect(() => {
-    if (!currentUser || currentUser.orgCode) {
+    if (!orgCode) {
       return;
     }
-    listenToEmployeeQuestions(currentUser.orgCode);
-  }, [currentUser && currentUser.orgCode]);
+    listenToEmployeeQuestions(orgCode);
+  }, [orgCode]);
 
   return (
     <div className={Styles.employeeHome}>
@@ -78,6 +82,7 @@ const EmployeeHome: FC<EmployeeProps> = props => {
             <h1 style={{ margin: "16px 0" }}>{selectedOption}</h1>
             <Content className={Styles.content}>
               <div className={Styles.savedWrapper}>{status ? "Saved" : ""}</div>
+              {console.log(questions)}
               {questions && questions.length !== 0 && (
                 <List
                   itemLayout="horizontal"
@@ -113,8 +118,9 @@ const EmployeeHome: FC<EmployeeProps> = props => {
 
 const mapStateToProps = (state: RootState) => {
   const { currentUser } = state.Auth;
+  const orgCode = currentUser ? currentUser.orgCode : undefined;
   const { questions, loading, status } = state.Employee;
-  return { currentUser, questions, loading, status };
+  return { orgCode, questions, loading, status };
 };
 
 export default connect(mapStateToProps, { listenToEmployeeQuestions })(

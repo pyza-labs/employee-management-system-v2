@@ -6,7 +6,7 @@ import {
   FirebaseStorageReference
 } from "../../utils";
 import { switchMap, map } from "rxjs/operators";
-import { FormData } from "../../containers/SignUp/SignUp";
+import { FormData } from "../../containers";
 
 export const listenToAuthState = (): Observable<User | null> => {
   return new Observable<User | null>(observer => {

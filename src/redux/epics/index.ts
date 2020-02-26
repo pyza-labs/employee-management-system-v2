@@ -14,7 +14,8 @@ import {
   listenToHRQuestionsEpic,
   deleteQuestionEpic,
   updateQuestionEpic,
-  setOnBoardingQuestionsEpic
+  setOnBoardingQuestionsEpic,
+  listenToEmployeeProgressEpic
 } from "./HREpics";
 
 import {
@@ -37,7 +38,8 @@ export default combineEpics(
   listenToEmployeeQuestionsEpic,
   listenToEmployeeAnswersEpic,
   updateEmployeeAnswerEpic,
-  uploadDocumentsEpic
+  uploadDocumentsEpic,
+  listenToEmployeeProgressEpic
 );
 
 export type RootEpic = Epic<RootAction, RootAction, RootState>;

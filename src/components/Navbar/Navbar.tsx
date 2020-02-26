@@ -36,9 +36,11 @@ const Navbar = (props: NavbarProps): JSX.Element => {
             <span className={Styles.name}>{props.name}</span>
           </div>
         )}
-        <Dropdown overlay={menu} placement="topRight">
-          <Button className={Styles.button}>Menu</Button>
-        </Dropdown>
+        {props.name && (
+          <Dropdown overlay={menu} placement="topRight">
+            <Button className={Styles.button}>Menu</Button>
+          </Dropdown>
+        )}
       </div>
     </div>
   );

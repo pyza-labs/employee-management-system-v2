@@ -4,7 +4,7 @@ import { FormDataHRQuestions } from "../../containers/HR/HRHome/QuestionForm/Que
 
 export enum HRActionType {
   ListenToHRQuestions = "HRActionType/ListenToHRQuestions",
-  SetQuestions = "HRActionType/SetQuestion",
+  SetQuestions = "HRActionType/SetQuestions",
   UpdateImportantStatus = "HRActionType/UpdateImportantStatus",
   DeleteQuestion = "HRActionType/DeleteQuestion",
   SetOnBoardingQuestions = "HRActionType/SetOnBoardingQuestions",
@@ -33,7 +33,7 @@ export const setOnBoardingQuestions = (
 export const listenToEmployeeProgress = (orgCode: string) =>
   action(HRActionType.ListenToEmployeeProgress, { orgCode });
 
-export const setEmployeeProgress = (employeeProgress: EmployeeProgress) =>
+export const setEmployeeProgress = (employeeProgress: EmployeeProgress[]) =>
   action(HRActionType.SetEmployeeProgress, { employeeProgress });
 
 const hrActions = {

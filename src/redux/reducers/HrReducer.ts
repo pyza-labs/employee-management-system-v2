@@ -5,7 +5,7 @@ import { HRAction, HRActionType } from "../actions";
 export interface HRStateType {
   readonly questions?: Question[];
   readonly loading: boolean;
-  readonly employeeProgress?: EmployeeProgress;
+  readonly employeeProgress?: EmployeeProgress[];
 }
 
 const initialState: HRStateType = { loading: true };

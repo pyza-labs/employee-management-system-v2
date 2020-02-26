@@ -1,5 +1,5 @@
 import { RootEpic } from ".";
-import { of, from } from "rxjs";
+import { of } from "rxjs";
 import { filter, switchMap, map, catchError, mapTo } from "rxjs/operators";
 import { isOfType } from "typesafe-actions";
 import {
@@ -13,8 +13,8 @@ import {
   listenToHRQuestions,
   updateImportant,
   deleteQuestion,
-  setOnBoardingQuestions
-  // listenToEmployeeProgress
+  setOnBoardingQuestions,
+  listenToEmployeeProgress
 } from "../../repos";
 
 export const listenToHRQuestionsEpic: RootEpic = action$ => {
@@ -69,16 +69,15 @@ export const setOnBoardingQuestionsEpic: RootEpic = action$ => {
   );
 };
 
-// export const listenToEmployeeProgressEpic: RootEpic = action$ => {
-//   return action$.pipe(
-//     filter(isOfType(HRActionType.ListenToEmployeeProgress)),
-//     switchMap(action => {
-//       const { orgCode } = action.payload;
-//       return listenToEmployeeProgress(orgCode).pipe(
-//         map(employeeProgress => setEmployeeProgress(employeeProgress)),
-//         catchError(error => of(setError(error.message)))
-//       );
-//     })
-//   );
-// };
-// message.success("Question deleted successfully");
+export const listenToEmployeeProgressEpic: RootEpic = action$ => {
+  return action$.pipe(
+    filter(isOfType(HRActionType.ListenToEmployeeProgress)),
+    switchMap(action => {
+      const { orgCode } = action.payload;
+      return listenToEmployeeProgress(orgCode).pipe(
+        map(employeeProgress => setEmployeeProgress(employeeProgress)),
+        catchError(error => of(setError(error.message)))
+      );
+    })
+  );
+};

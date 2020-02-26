@@ -1,16 +1,16 @@
 import React, { useEffect, FC } from "react";
 import "./App.css";
-import { message as ShowMessage } from "antd";
-import LoginPage from "../LoginPage/LoginPage";
-import Navbar from "../../components/Navbar/Navbar";
-import { Router, Redirect } from "@reach/router";
+import { message as ShowMessage, Spin } from "antd";
+import LoginPage from "../LoginPage";
+import Navbar from "../../components/Navbar";
+import { Router } from "@reach/router";
 import SignUp from "../SignUp/SignUp";
-import EmployeeHome from "../Employee/EmployeeHome/EmployeeHome";
-import HRHome from "../HR/HRHome/HRHome";
+import EmployeeHome from "../Employee/EmployeeHome";
+import HRHome from "../HR/HRHome";
 import { User } from "../../repos";
 import { listenToAuthState, RootState } from "../../redux";
 import { connect } from "react-redux";
-import ForgotPassword from "../ForgotPassword/ForgotPassword";
+import ForgotPassword from "../ForgotPassword";
 
 interface AppProps {
   currentUser?: User | null;
@@ -58,7 +58,11 @@ const App: FC<AppProps> = props => {
   }, [error]);
 
   if (currentUser === undefined) {
-    return <div>Loading</div>;
+    return (
+      <div className="Apploader">
+        <Spin size="large" tip="Loading..." />
+      </div>
+    );
   }
 
   if (currentUser === null) {

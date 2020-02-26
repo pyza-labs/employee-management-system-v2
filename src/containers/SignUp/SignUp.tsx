@@ -10,13 +10,14 @@ import {
   Icon,
   message
 } from "antd";
-import { RouteComponentProps } from "@reach/router";
+import { RouteComponentProps, Link } from "@reach/router";
 import { FormComponentProps } from "antd/lib/form";
 import { UploadProps } from "antd/lib/upload";
 import { RootState } from "../../redux";
 import { connect } from "react-redux";
 import { signUp } from "../../redux";
 import { uploadProfilePicture } from "../../repos";
+import { Routes } from "..";
 
 var {
   CountryDropdown,
@@ -34,6 +35,7 @@ export interface FormData {
   bio: string;
   pan: string;
   address: string;
+  upload: Array<File>;
 }
 
 interface SignUpFormProps extends FormComponentProps<FormData> {
@@ -46,52 +48,51 @@ const SignUpForm: FC<SignUpFormProps> = props => {
   const [state = "", setState] = useState<string>();
   const [region = "", setRegion] = useState<string>();
   const [email = "", setEmail] = useState();
-  const [disabled = true, setDisabled] = useState();
 
-  const uploadAttributes: UploadProps = {
-    name: "file",
-    customRequest: options => {
-      const { onProgress, onError, onSuccess, file } = options;
-      uploadProfilePicture(file).subscribe(
-        snapshot => {
-          const percent =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          onProgress({ percent }, file);
-          if (percent === 100) {
-            onSuccess({ downloadUrl: snapshot.downloadURL }, file);
-          }
-        },
-        error => {
-          onError(error);
-        }
-      );
-    },
-    headers: {
-      authorization: "authorization-text"
-    },
-    onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-    beforeUpload(file) {
-      const isJpgOrPng =
-        file.type === "image/jpeg" || file.type === "image/png";
-      if (!isJpgOrPng) {
-        message.error("You can only upload JPG/PNG file!");
-      }
-      const isLt1M = file.size / 1024 / 1024 < 1;
-      if (!isLt1M) {
-        message.error("Image must be smaller than 1MB!");
-      }
-      return isJpgOrPng && isLt1M;
-    }
-  };
+  // const uploadAttributes: UploadProps = {
+  //   name: "file",
+  //   customRequest: options => {
+  //     const { onProgress, onError, onSuccess, file } = options;
+  //     uploadProfilePicture(file).subscribe(
+  //       snapshot => {
+  //         const percent =
+  //           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  //         onProgress({ percent }, file);
+  //         if (percent === 100) {
+  //           onSuccess({ downloadUrl: snapshot.downloadURL }, file);
+  //         }
+  //       },
+  //       error => {
+  //         onError(error);
+  //       }
+  //     );
+  //   },
+  //   headers: {
+  //     authorization: "authorization-text"
+  //   },
+  //   onChange(info) {
+  //     if (info.file.status !== "uploading") {
+  //       console.log(info.file, info.fileList);
+  //     }
+  //     if (info.file.status === "done") {
+  //       message.success(`${info.file.name} file uploaded successfully`);
+  //     } else if (info.file.status === "error") {
+  //       message.error(`${info.file.name} file upload failed.`);
+  //     }
+  //   },
+  //   beforeUpload(file) {
+  //     const isJpgOrPng =
+  //       file.type === "image/jpeg" || file.type === "image/png";
+  //     if (!isJpgOrPng) {
+  //       message.error("You can only upload JPG/PNG file!");
+  //     }
+  //     const isLt1M = file.size / 1024 / 1024 < 1;
+  //     if (!isLt1M) {
+  //       message.error("Image must be smaller than 1MB!");
+  //     }
+  //     return isJpgOrPng && isLt1M;
+  //   }
+  // };
 
   const selectState = (val: string) => {
     setState(val);
@@ -109,7 +110,7 @@ const SignUpForm: FC<SignUpFormProps> = props => {
         console.log("Received values of form: ", values);
         props.signUp(values, state, region);
       } else {
-        return alert("Please fill the fields marked with asterik");
+        return message.error("Please fill the fields marked with asterik");
       }
     });
   };
@@ -128,7 +129,6 @@ const SignUpForm: FC<SignUpFormProps> = props => {
     if (value && value !== form.getFieldValue("password")) {
       callback("Two passwords that you enter is inconsistent!");
     } else {
-      setDisabled(false);
       callback();
     }
   };
@@ -142,10 +142,12 @@ const SignUpForm: FC<SignUpFormProps> = props => {
   };
 
   const normalizeFileStructure = (e: any): any => {
-    // Doubt
     console.log("Upload event:", e);
     if (Array.isArray(e)) {
       return e;
+    }
+    if (e.fileList.length > 1) {
+      e.fileList.shift();
     }
     return e && e.fileList;
   };
@@ -266,8 +268,8 @@ const SignUpForm: FC<SignUpFormProps> = props => {
             valuePropName: "fileList",
             getValueFromEvent: normalizeFileStructure
           })(
-            <Upload {...uploadAttributes}>
-              <Button disabled={disabled}>
+            <Upload>
+              <Button>
                 <Icon type="upload" /> Click to Upload
               </Button>
             </Upload>
@@ -335,6 +337,9 @@ const SignUpForm: FC<SignUpFormProps> = props => {
           <Button type="primary" htmlType="submit" loading={props.loading}>
             Register
           </Button>
+          <Link className={Styles.forgot} to={Routes.Home}>
+            or SignIn Instead ?
+          </Link>
         </Form.Item>
       </Form>
     </div>

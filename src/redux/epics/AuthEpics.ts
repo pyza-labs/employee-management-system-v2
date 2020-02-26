@@ -84,7 +84,9 @@ export const signUpEpic: RootEpic = action$ => {
       const { email, password } = values;
       return from(auth().createUserWithEmailAndPassword(email, password)).pipe(
         switchMap(credential => {
-          return signUp(credential.user!.uid, values, state, region);
+          return signUp(credential.user!.uid, values, state, region).pipe(
+            switchMap(() => uploadProfilePicture(values.upload[0]))
+          );
         }),
         mapTo(setMessage("Form Submitted Succefully")),
         catchError(error => of(setError(error.message)))

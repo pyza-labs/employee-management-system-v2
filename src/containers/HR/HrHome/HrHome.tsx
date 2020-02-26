@@ -1,9 +1,9 @@
-import React, { useState, useEffect, FC } from "react";
+import React, { useState, FC } from "react";
 import Styles from "./HRHome.module.css";
 import { Layout, Menu, Icon } from "antd";
-import ProgressBar from "./ProgressBar/ProgressBar";
-import QuestionTable from "./QuestionsTable/QuestionTable";
-import QuestionForm from "./QuestionForm/QuestionForm";
+import ProgressBar from "./ProgressBar";
+import QuestionTable from "./QuestionsTable";
+import QuestionForm from "./QuestionForm";
 import { connect } from "react-redux";
 import { RootState, listenToHRQuestions } from "../../../redux";
 import { Question } from "../../../repos";
@@ -20,7 +20,7 @@ interface HRProps extends RouteComponentProps {
 
 const HRHome: FC<HRProps> = props => {
   const { orgCode, questions = [] } = props;
-  const [onQuestions = false, setOnQuestions] = useState();
+  const [onQuestions = true, setOnQuestions] = useState();
   const [progress = false, setProgress] = useState();
 
   const [selectedOption = "Questions", setSelectedOption] = useState();
@@ -85,10 +85,10 @@ const HRHome: FC<HRProps> = props => {
                 <QuestionTable />
               </Content>
             )}
-            {progress && (
+            {progress && orgCode && (
               <ProgressBar
-                totalQuestions={questions!.length}
-                orgCode={orgCode!}
+                totalQuestions={questions.length}
+                orgCode={orgCode}
               />
             )}
           </Layout>

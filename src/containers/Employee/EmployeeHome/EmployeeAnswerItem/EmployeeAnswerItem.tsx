@@ -13,14 +13,14 @@ import {
   uploadDocuments,
   saveStatus
 } from "../../../../redux/actions";
-import { EmployeeQA } from "../../../../repos";
+import { Answer } from "../../../../repos";
 
 interface EmpAnswerProps {
   question: Question;
   saveStatus: typeof saveStatus;
   userId?: string;
-  employeeQA?: EmployeeQA;
-  listenToEmployeeAnswers: typeof listenToEmployeeAnswers; // Not giving error in employeeHome
+  employeeQA?: Answer;
+  listenToEmployeeAnswers: typeof listenToEmployeeAnswers;
   updateEmployeeAnswer: typeof updateEmployeeAnswer;
   uploadDocuments: typeof uploadDocuments;
 }
@@ -47,7 +47,8 @@ const EmployeeAnswerItem: FC<EmpAnswerProps> = props => {
     if (!employeeQA) {
       return;
     }
-    switch (props.question.type) {
+    console.log(employeeQA.answer);
+    switch (question.type) {
       case "text":
         setText(employeeQA.answer);
         break;
@@ -59,7 +60,7 @@ const EmployeeAnswerItem: FC<EmpAnswerProps> = props => {
         break;
       default:
     }
-  }, []);
+  }, [question]);
 
   const debounceEvent = (...args: [(event: any) => any, number]) => {
     // Doubt
@@ -121,11 +122,6 @@ const EmployeeAnswerItem: FC<EmpAnswerProps> = props => {
       if (info.file.status !== "uploading") {
         console.log(info.file, info.fileList);
       }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
     },
     beforeUpload(file) {
       const isJpgOrPng =
@@ -144,7 +140,7 @@ const EmployeeAnswerItem: FC<EmpAnswerProps> = props => {
   };
 
   const render = () => {
-    switch (props.question.type) {
+    switch (question.type) {
       case "text":
         return (
           <div className={Styles.inputDiv}>
@@ -165,8 +161,8 @@ const EmployeeAnswerItem: FC<EmpAnswerProps> = props => {
               onChange={radioHandler}
               defaultValue={radio}
             >
-              {props.question.options &&
-                props.question.options.map((option, index) => {
+              {question.options &&
+                question.options.map((option, index) => {
                   return (
                     <Radio value={option} key={index.toString()}>
                       {option}
