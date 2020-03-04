@@ -1,5 +1,5 @@
 import React, { useState, useEffect, FC } from "react";
-import Styles from "./EmployeeHome.module.css";
+import Styles from "./EmployeeHome.module.scss";
 import { Layout, Menu, Icon, List, Skeleton } from "antd";
 import EmployeeAnswers from "./EmployeeAnswerItem";
 import { connect } from "react-redux";

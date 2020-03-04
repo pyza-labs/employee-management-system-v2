@@ -1,5 +1,5 @@
 import React, { useState, FC, ChangeEventHandler, FormEvent } from "react";
-import Styles from "./QuestionForm.module.css";
+import Styles from "./QuestionForm.module.scss";
 import { Icon, Input, Button, Switch, Form, Radio } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import { RadioChangeEvent } from "antd/lib/radio";

@@ -5,7 +5,7 @@ import React, {
   ChangeEvent,
   useEffect
 } from "react";
-import Styles from "./LoginPage.module.css";
+import Styles from "./LoginPage.module.scss";
 import { Input, Button } from "antd";
 import { Link, RouteComponentProps, redirectTo } from "@reach/router";
 import { connect } from "react-redux";

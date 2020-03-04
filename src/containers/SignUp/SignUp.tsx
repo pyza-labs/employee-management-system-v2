@@ -1,5 +1,5 @@
 import React, { useState, FC, FormEvent, FocusEvent } from "react";
-import Styles from "./SignUp.module.css";
+import Styles from "./SignUp.module.scss";
 import {
   Form,
   Input,

@@ -1,0 +1,8 @@
+$borderProperty: 1px solid rgb(235, 237, 240);
+
+@mixin flexDiv($align: center, $justify: center, $flexDir: row) {
+  display: flex;
+  align-items: $align;
+  justify-content: $justify;
+  flex-direction: $flexDir;
+}

@@ -1,5 +1,5 @@
 import React, { useEffect, FC, Fragment } from "react";
-import Styles from "./ProgressBar.module.css";
+import Styles from "./ProgressBar.module.scss";
 import { Progress, Row, Col, Popover } from "antd";
 import { EmployeeProgress } from "../../../../repos";
 import { connect } from "react-redux";
