@@ -1,7 +1,7 @@
+@import "../../Styles/";
+
 .signup {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flexDiv;
   width: 100%;
   margin: 50px auto auto auto;
 }

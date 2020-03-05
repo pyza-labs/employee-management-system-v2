@@ -1,8 +1,9 @@
+@import "../../../Styles/";
+
 .content {
-  background: #fff;
-  padding: 24px;
+  @include content;
+
   margin: 0;
-  min-height: 280px;
 }
 .cardWrapper {
   background: #ececec;
@@ -13,7 +14,6 @@
   color: red;
 }
 .savedWrapper {
-  display: flex;
-  justify-content: flex-end;
+  @include flexDiv(stretch, flex-end);
   height: 21px;
 }

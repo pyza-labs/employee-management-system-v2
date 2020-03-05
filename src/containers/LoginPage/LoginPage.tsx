@@ -64,13 +64,12 @@ const LoginPage: FC<LoginProps> = props => {
       <div className={Styles.submitInfo}>
         <Button
           loading={loading}
-          className={Styles.button}
           onClick={() => signIn(email, password, orgCode)}
           disabled={!email || !password || !orgCode}
         >
           SignIn
         </Button>
-        <Button className={Styles.button}>
+        <Button>
           <Link to={Routes.SignUp}>SignUp</Link>
         </Button>
         <Link className={Styles.forgot} to={Routes.ForgotPassword}>

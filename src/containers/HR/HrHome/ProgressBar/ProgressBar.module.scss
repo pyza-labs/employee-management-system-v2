@@ -1,8 +1,10 @@
+@import "../../../../Styles";
+
 .rowData {
   margin: 8px;
 }
 .rowData:hover {
-  cursor: pointer;
+  cursor: $cursor;
   color: #1890ff;
 }
 .name {
@@ -11,10 +13,9 @@
   font-weight: 500;
 }
 .popover {
-  display: flex;
+  @include flexDiv(stretch, flex-start);
 }
 .questionWrapper {
-  display: flex;
-  flex-direction: column;
+  @include flexDiv(stretch, flex-start, column);
   margin-right: 4px;
 }

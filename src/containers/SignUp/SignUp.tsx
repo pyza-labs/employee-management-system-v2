@@ -49,51 +49,6 @@ const SignUpForm: FC<SignUpFormProps> = props => {
   const [region = "", setRegion] = useState<string>();
   const [email = "", setEmail] = useState();
 
-  // const uploadAttributes: UploadProps = {
-  //   name: "file",
-  //   customRequest: options => {
-  //     const { onProgress, onError, onSuccess, file } = options;
-  //     uploadProfilePicture(file).subscribe(
-  //       snapshot => {
-  //         const percent =
-  //           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  //         onProgress({ percent }, file);
-  //         if (percent === 100) {
-  //           onSuccess({ downloadUrl: snapshot.downloadURL }, file);
-  //         }
-  //       },
-  //       error => {
-  //         onError(error);
-  //       }
-  //     );
-  //   },
-  //   headers: {
-  //     authorization: "authorization-text"
-  //   },
-  //   onChange(info) {
-  //     if (info.file.status !== "uploading") {
-  //       console.log(info.file, info.fileList);
-  //     }
-  //     if (info.file.status === "done") {
-  //       message.success(`${info.file.name} file uploaded successfully`);
-  //     } else if (info.file.status === "error") {
-  //       message.error(`${info.file.name} file upload failed.`);
-  //     }
-  //   },
-  //   beforeUpload(file) {
-  //     const isJpgOrPng =
-  //       file.type === "image/jpeg" || file.type === "image/png";
-  //     if (!isJpgOrPng) {
-  //       message.error("You can only upload JPG/PNG file!");
-  //     }
-  //     const isLt1M = file.size / 1024 / 1024 < 1;
-  //     if (!isLt1M) {
-  //       message.error("Image must be smaller than 1MB!");
-  //     }
-  //     return isJpgOrPng && isLt1M;
-  //   }
-  // };
-
   const selectState = (val: string) => {
     setState(val);
   };

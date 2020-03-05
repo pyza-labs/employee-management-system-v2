@@ -1,29 +1,35 @@
+@import "../../Styles/";
+
+$spacingInButtons: 4px;
+
+@mixin border-side($property) {
+  border-top: $property;
+  border-left: $property;
+  border-right: $property;
+}
+
 .login {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  @include flexDiv(center, center, column);
   margin: 50px auto auto auto;
 }
 
 .loginInfo {
+  @include flexDiv(center, center, column);
   width: 300px;
-  flex-direction: column;
 }
 
 .input,
 .input input {
   margin-bottom: 4px;
-  border-top: 0 none;
-  border-left: 0 none;
-  border-right: 0 none;
+  @include border-side(0 none);
 }
 
 .submitInfo {
-  margin-top: 4px;
-}
+  margin-top: $spacingInButtons;
 
-.button {
-  margin-right: 4px;
+  button {
+    margin-right: $spacingInButtons;
+  }
 }
 
 .forgot {

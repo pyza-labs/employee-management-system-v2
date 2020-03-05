@@ -105,13 +105,13 @@ const HRAddQuestionForm: FC<HRAddFormProps> = props => {
             initialValue: "text"
           })(
             <Radio.Group name="radiogroup" onChange={radioHandler}>
-              <Radio.Button className={Styles.radioButton} value="text">
+              <Radio.Button className={Styles.button} value="text">
                 Normal Text
               </Radio.Button>
-              <Radio.Button className={Styles.radioButton} value="file">
+              <Radio.Button className={Styles.button} value="file">
                 Upload a File
               </Radio.Button>
-              <Radio.Button className={Styles.radioButton} value="mcq">
+              <Radio.Button className={Styles.button} value="mcq">
                 Multiple Choice
               </Radio.Button>
             </Radio.Group>
