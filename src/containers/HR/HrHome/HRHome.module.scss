@@ -1,0 +1,11 @@
+@import "../../../Styles";
+
+.content {
+  @include content;
+
+  margin: 0;
+}
+.selectedOption {
+  margin: 16px 0;
+  font-size: $fontSize;
+}

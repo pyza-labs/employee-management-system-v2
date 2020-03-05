@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment, FC, ChangeEvent } from "react";
-import Styles from "./EmployeeAnswerItem.module.css";
+import Styles from "./EmployeeAnswerItem.module.scss";
 import { Input, message, Upload, Button, Icon, Radio, Tag } from "antd";
 import debounce from "lodash.debounce";
 import { UploadProps } from "antd/lib/upload";

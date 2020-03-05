@@ -1,5 +1,5 @@
 import React, { FC, useState, ChangeEvent } from "react";
-import Styles from "./ForgotPassword.module.css";
+import Styles from "./ForgotPassword.module.scss";
 import { RouteComponentProps, Link } from "@reach/router";
 import { connect } from "react-redux";
 import { resetPassword } from "../../redux";

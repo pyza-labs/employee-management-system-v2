@@ -1,5 +1,5 @@
 import React from "react";
-import Styles from "./Navbar.module.css";
+import Styles from "./Navbar.module.scss";
 import { PageHeader, Dropdown, Button, Menu, Avatar } from "antd";
 import { RootState, logout } from "../../redux";
 import { connect } from "react-redux";
@@ -25,7 +25,6 @@ const Navbar = (props: NavbarProps): JSX.Element => {
   return (
     <div className={Styles.nav}>
       <PageHeader
-        className={Styles.pageHeader}
         title="Pyza Labs"
         subTitle="Employee Management System"
       ></PageHeader>

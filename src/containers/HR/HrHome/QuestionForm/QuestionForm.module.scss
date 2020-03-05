@@ -1,6 +1,8 @@
+@import "../../../../Styles";
+
 .input {
-  display: flex;
-  flex-direction: column;
+  @include flexDiv(stretch, flex-start, column);
+
   width: 50%;
   margin: 8px;
 }
@@ -11,23 +13,20 @@
   margin-left: 10px;
 }
 .addOptionWrapper {
-  display: flex;
+  @include flexDiv(stretch, space-between);
+
   margin: 2px;
-  justify-content: space-between;
 }
 .addQuestion {
-  display: flex;
+  @include flexDiv(stretch, flex-start);
+
   margin-bottom: 20px;
-  justify-content: flex-start;
-  cursor: pointer;
+  cursor: $cursor;
 }
 .addQuestion:hover {
   color: #6193ff;
 }
 .plus {
-  font-size: 1.5em;
+  font-size: $fontSize;
   margin-right: 8px;
-}
-.radioButton {
-  margin: 4px;
 }

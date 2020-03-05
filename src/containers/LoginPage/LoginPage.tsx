@@ -5,7 +5,7 @@ import React, {
   ChangeEvent,
   useEffect
 } from "react";
-import Styles from "./LoginPage.module.css";
+import Styles from "./LoginPage.module.scss";
 import { Input, Button } from "antd";
 import { Link, RouteComponentProps, redirectTo } from "@reach/router";
 import { connect } from "react-redux";
@@ -64,13 +64,12 @@ const LoginPage: FC<LoginProps> = props => {
       <div className={Styles.submitInfo}>
         <Button
           loading={loading}
-          className={Styles.button}
           onClick={() => signIn(email, password, orgCode)}
           disabled={!email || !password || !orgCode}
         >
           SignIn
         </Button>
-        <Button className={Styles.button}>
+        <Button>
           <Link to={Routes.SignUp}>SignUp</Link>
         </Button>
         <Link className={Styles.forgot} to={Routes.ForgotPassword}>

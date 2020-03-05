@@ -1,5 +1,5 @@
 import React, { useState, FC } from "react";
-import Styles from "./HRHome.module.css";
+import Styles from "./HRHome.module.scss";
 import { Layout, Menu, Icon } from "antd";
 import ProgressBar from "./ProgressBar";
 import QuestionTable from "./QuestionsTable";

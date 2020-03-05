@@ -1,5 +1,5 @@
 import React, { useEffect, FC } from "react";
-import "./App.css";
+import "./App.scss";
 import { message as ShowMessage, Spin } from "antd";
 import LoginPage from "../LoginPage";
 import Navbar from "../../components/Navbar";

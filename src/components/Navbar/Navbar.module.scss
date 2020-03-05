@@ -1,0 +1,26 @@
+@import "../../Styles";
+
+.nav {
+  @include flexDiv(stretch, space-between);
+
+  flex: 1;
+  border-bottom: $borderProperty;
+}
+.subWrapper {
+  @include flexDiv;
+}
+.avatarWrapper {
+  @include flexDiv;
+
+  margin-right: 30px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+
+  span {
+    margin-left: 12px;
+  }
+}
+.button {
+  border: $borderProperty;
+  height: 100%;
+}

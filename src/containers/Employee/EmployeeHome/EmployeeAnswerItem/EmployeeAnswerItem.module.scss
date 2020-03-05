@@ -1,6 +1,7 @@
+@import "../../../../Styles";
+
 .mcqOption {
-  display: flex;
-  flex-direction: column;
+  @include flexDiv(stretch, flex-start, column);
 }
 .input {
   margin-top: 4px;

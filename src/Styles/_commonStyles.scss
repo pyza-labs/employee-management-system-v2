@@ -1,0 +1,16 @@
+$borderProperty: 1px solid rgb(235, 237, 240);
+$fontSize: 1.5em;
+$cursor: pointer;
+
+@mixin flexDiv($align: center, $justify: center, $flexDir: row) {
+  display: flex;
+  align-items: $align;
+  justify-content: $justify;
+  flex-direction: $flexDir;
+}
+
+@mixin content {
+  background: #fff;
+  padding: 24px;
+  min-height: 280px;
+}
